@@ -14,10 +14,12 @@ double met_dichotomy(double a, double b, double EPS) {
 
         if (fabs(f(c)) < EPS) {
             return c;
-        }else if (f(b) * f(c) < (-1) * EPS) {
+        }else if (f(b) * f(c) < EPS) {
             a = c;
-        } else {
+        } else if (f(c) * f(a) < EPS) {
             b = c;
+        } else {
+            return NAN;
         }
     }
 
@@ -36,7 +38,12 @@ int main(int argc, char *argv[]) {
 
     double result = met_dichotomy(x_left, x_right, EPS);
 
-    printf("Result x = %f\n", result);
+    if(!isnan(result)) {
+        printf("Result x = %f\n", result);
+    }
+    else {
+        printf("No solutions in given interval");
+    }
 
     return 0;
 }
