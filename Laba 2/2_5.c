@@ -111,6 +111,5 @@ int main(int argc, char* argv[]) {
     }
 
     free(A);
-    getchar();
     return 0;
 }
