@@ -3,7 +3,7 @@
 
 
 double f(double x) {
-    return 4 - exp(x) - 2 * pow(x, 2);
+    return x - 2 + sin(1/x);
 }
 
 double met_dichotomy(double a, double b, double EPS) {
