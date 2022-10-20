@@ -12,7 +12,7 @@ double met_dichotomy(double a, double b, double EPS) {
     while ( b - a > EPS) {
         c = (a + b) / 2;
 
-        if ((f(c) > (-1) * EPS) && (f(c) < EPS)) {
+        if (fabs(f(c)) < EPS) {
             return c;
         }else if (f(b) * f(c) < (-1) * EPS) {
             a = c;
