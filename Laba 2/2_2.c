@@ -3,65 +3,86 @@
 #include <string.h>
 #include <ctype.h>
 
-void func_r(char* str, char* res, unsigned long len){
-    for(int i=0;i<len;i++){
-        res[i]=str[strlen(str)-i-1];
+void reverse(char* str) {
+    char tmp;
+    char *start = str;
+    char *end = start + strlen(str) - 1;
+
+    while (end > start) {
+        tmp = *start;
+        *start = *end;
+        *end = tmp;
+        start++;
+        end--;
     }
 }
 
-void func_u(char* str, unsigned long len){
-    for(int i=0;i<len;i+=2){
-        if(str[i]>=97 && str[i]<=122) str[i]-= 32;
+void uppercase(char* str) {
+    int len = strlen(str) - 1;
+    for (int i = 0; i < len; i+=2) {
+        if (str[i] >= 97 && str[i] <= 122) {
+            str[i] -= 32;
+        }
     }
 }
 
-void func_c(char* str1, char* str2, char* res){
-    unsigned long len1=strlen(str1);
-    unsigned long len2=strlen(str2);
-    for(unsigned long i = 0; i<len1; i++) res[i] = str1[i];
-    for(unsigned long i = 0; i<len2; i++) res[len1+i] = str2[i];
-}
-
-void func_n(char* str, char* res, unsigned long len){
+void new_str(char* str, char* res) {
+    int len = strlen(str) - 1;
     int n = 0;
-    for(unsigned long i = 0; i<len; i++){
-        if(isdigit(str[i])){
+    for (int i = 0; i < len; i++) {
+        if (isdigit(str[i])) {
             res[n] = str[i];
             n++;
         }
     }
-    for(unsigned long i = 0; i<len; i++){
-        if(isalpha(str[i])){
+
+    for (int i = 0; i < len; i++) {
+        if (isalpha(str[i])) {
             res[n] = str[i];
             n++;
         }
     }
-    for(unsigned long i = 0; i<len; i++){
-        if(!isalpha(str[i]) && !isdigit(str[i])){
+
+    for (int i = 0; i < len; i++) {
+        if (!isalpha(str[i]) && !isdigit(str[i])) {
             res[n] = str[i];
             n++;
         }
     }
 }
 
-void print(char* str, unsigned long len){
-    for(int i=0;i<len;i++) printf("%c", str[i]);
+void concatenation(char* str1, char* str2, char* res) {
+    int len1 = strlen(str1);
+    int len2 = strlen(str2);
+    for (int i = 0; i < len1; i++) {
+        res[i] = str1[i];
+    }
+    for (int i = 0; i < len2; i++) {
+        res[len1 + i] = str2[i];
+    }
+
+}
+
+char print(char* str) {
+    int len = strlen(str) - 1;
+    for (int i = 0; i < len; i++) {
+        return printf("%s", str[i]);
+    }
 }
 
 int main(int argc, char* argv[]){
-    if(argv[2][0] != '-'){
-        printf("Input error: wrong flag!");
+    if (argv[2][0] != '-') {
+        printf("Input error: wrong flag");
         return 0;
     }
     if(strlen(argv[2])!=2){
         printf("Input error: wrong flag!");
         return 0;
     }
-    if(argc<3){
+    if(argc < 3){
         printf("Input error: few arguments!");
         return 0;
     }
-
     else{
         if(argc == 3 && argv[2][1] == 'c'){
             printf("Input error: too few arguments for that flag!");
@@ -73,36 +94,27 @@ int main(int argc, char* argv[]){
         }
     }
 
-    unsigned long len = strlen(argv[1]);
-    if(argv[2][1] == 'l'){
-        printf("%lu", len);
-    }
-    else if(argv[2][1] == 'r'){
-        char* reversed = (char*)malloc( strlen(argv[1])* sizeof(char));
-        func_r(argv[1],reversed, len);
-        print(reversed, len);
-        free(reversed);
-    }
-    else if(argv[2][1] == 'u'){
-        char* str = argv[1];
-        func_u(str, len);
-        print(str, len);
-    }
-    else if(argv[2][1] == 'n'){
-        char* str = argv[1];
-        char* result = (char*)malloc( len * sizeof(char));
-        func_n(str, result, len);
-        print(result, len);
+    if (argv[2][1] == 'l') {
+        int len = strlen(argv[1]);
+        printf("%d", len);
+    } else if (argv[2][1] == 'r') {
+        reverse(argv[1]);
+        print(argv[1]);
+    } else if (argv[2][1] == 'u') {
+        uppercase(argv[1]);
+        print(argv[1]);
+    } else if (argv[2][1] == 'n') {
+        char* result = (char*)malloc(strlen(argv[1]) * sizeof(char));
+        new_str(argv[1], result);
+        print(result);
         free(result);
+    } else if (argv[2][1] == 'c') {
+        char* result = (char*)malloc((strlen(argv[1]) + strlen(argv[3])) * sizeof(char));
+        concatenation(argv[1], argv[3], result);
+        print(result);
+        free(result);
+    } else {
+        printf("Input error: wrong flag!");
     }
-    else if(argv[2][1] == 'c'){
-        char* str1 = argv[1];
-        char* str2 = argv[3];
-        char* result = (char*)malloc( (strlen(str1) + strlen(str2)) * sizeof(char));
-        func_c(str1, str2, result);
-        print(result, strlen(result));
-    }
-    else printf("Input error: wrong flag!");
-
     return 0;
 }
