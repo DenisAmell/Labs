@@ -26,7 +26,11 @@ int subtraction(int a, int b) {
 
 int print(char* res, int SIZE) {
     for (int i = SIZE - 1; i >= 0; i--) {
-        printf("%c", res[i]);
+        if ((i == SIZE - 1) && (res[i] == '0')) {
+            break;
+        } else {
+            printf("%c", res[i]);
+        }
     }
 }
 
@@ -37,10 +41,10 @@ int ten_into_n(unsigned int num, int r, char* res, int SIZE) {
     for (int i = 0; i <= SIZE; i++) {
         if (count >= SIZE) {
             SIZE <<= 1;
-            res = (char*)realloc(res, SIZE * sizeof(char*));
+            res = (char*)realloc(res, SIZE * sizeof(char));
         }
         if (num <= r) {
-            if (count == 1) {
+            if (count <= 1 && num == 0) {
                 break;
             }
             else {
@@ -65,17 +69,33 @@ int ten_into_n(unsigned int num, int r, char* res, int SIZE) {
 
 int main() {
     int SIZE = 4;
-    int num, r;
+    char* result = (char*)malloc(sizeof(char) * SIZE);
 
-    if (scanf("%d%d", &num, &r) != 2) {
+    if (result == NULL) {
         printf("Error");
         return -1;
     }
-    char* result = (char*)malloc(sizeof(char) * SIZE);
-    if (result == NULL) {
-        printf("ban");
+
+    int num, r;
+    char c;
+
+    if (!(scanf("%d%d%c", &num , &r, &c) == 3 && c == '\n')){
+        printf("Error");
+        return -1;
     }
-    ten_into_n(num, r, result, SIZE);
+    if ((r < 1) || (r > 5)) {
+        printf("Error");
+        return -1;
+    }
+    if (num < 0) {
+        num *= -1;
+        printf("Result: -");
+        ten_into_n(num, r, result, SIZE);
+    } else {
+        printf("Result: ");
+        ten_into_n(num, r, result, SIZE);
+    }
+
     free(result);
 
     return 0;
