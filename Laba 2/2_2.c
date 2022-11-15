@@ -60,14 +60,15 @@ void concatenation(char* str1, char* str2, char* res) {
     for (int i = 0; i < len2; i++) {
         res[len1 + i] = str2[i];
     }
-
+    res[len1 + len2] = '\0';
 }
 
 char print(char* str) {
-    int len = strlen(str) - 1;
+    /*int len = strlen(str) - 1;
     for (int i = 0; i < len; i++) {
-        return printf("%s", str[i]);
-    }
+        return printf("%c", str[i]);
+    }*/
+    printf("%s", str);
 }
 
 int main(int argc, char* argv[]){
@@ -93,7 +94,6 @@ int main(int argc, char* argv[]){
             return 0;
         }
     }
-
     if (argv[2][1] == 'l') {
         int len = strlen(argv[1]);
         printf("%d", len);
@@ -109,7 +109,12 @@ int main(int argc, char* argv[]){
         print(result);
         free(result);
     } else if (argv[2][1] == 'c') {
-        char* result = (char*)malloc((strlen(argv[1]) + strlen(argv[3])) * sizeof(char));
+        char* result = (char*)malloc((strlen(argv[1]) + strlen(argv[3]) + 1) * sizeof(char));
+        if (result == NULL)
+        {
+            printf("Memory allocation error!!1!1");
+            return -1;
+        }
         concatenation(argv[1], argv[3], result);
         print(result);
         free(result);
