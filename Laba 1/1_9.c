@@ -44,12 +44,22 @@ int ten_into_n(unsigned int num, int r, char *res, size_t SIZE)
     return print(res, count);
 }
 
-int to_dec(int num, int r)
+int to_dec(char *num, int r)
 {
-    int res = 0;
-    for (int i = 0; num; num /= 10, i++)
+    int len = strlen(num) - 1;
+    int res = 0, base = 1;
+    for (int i = len; i >= 0; i--)
     {
-        res += (num % 10) * pow(r, i);
+        if (num[i] >= '0' && num[i] <= '9')
+        {
+            res += (num[i] - 48) * base;
+            base *= r;
+        }
+        if (num[i] >= 'A' && num[i] <= 'Z')
+        {
+            res += (num[i] - 55) * base;
+            base *= r;
+        }
     }
     return res;
 }
@@ -74,6 +84,11 @@ int main(int argc, char *argv[])
     char *template = "Stop";
     size_t size = 10;
     char *res = (char *)malloc(sizeof(char) * size);
+    if (res == NULL)
+    {
+        printf("Error: not memory");
+        return -1;
+    }
 
     printf("Enter r: ");
     scanf("%d", &r);
@@ -92,7 +107,7 @@ int main(int argc, char *argv[])
         {
             break;
         }
-        else if (atoi(num) == 0)
+        else if (atoi(num) == 0 && r <= 9)
         {
             printf("No number\n");
             continue;
@@ -102,7 +117,8 @@ int main(int argc, char *argv[])
             printf("No number base\n");
             continue;
         }
-        num1 = to_dec(atoi(num), r);
+
+        num1 = to_dec(num, r);
         if (abs(num1) > num_max)
         {
             num_max = num1;
