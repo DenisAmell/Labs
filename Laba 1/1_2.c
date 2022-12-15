@@ -1,9 +1,90 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <math.h>
 
-double func_q(double a, double b, double c)
+static char *ErrorNames[] = {
+    "Not opening file",
+    "Out of Memory",
+    "Not this index",
+    "Wrong input flag",
+    "Few arguments!",
+    "Too many arguments!"};
+
+enum Errors
+{
+    OPENING_FILE = 1,
+    OUT_OF_MEMORY,
+    NOT_INDEX,
+    WRONG_INPUT,
+    FEW_ARGUMENTS,
+    MANY_ARGUMENTS
+};
+
+int my_atoi(char s[])
+{
+    int n = 0, flag = 1;
+    for (int i = 0; s[i] >= '0' && s[i] <= '9'; ++i)
+    {
+        if (s[i] == '-')
+        {
+            flag = -1;
+            continue;
+        }
+        n = 10 * n + (s[i] - '0');
+    }
+    n *= flag;
+    return n;
+}
+
+int my_strlen(char s[])
+{
+    int len = 0;
+    for (int i = 0; s[i] != '\0'; i++)
+    {
+        len++;
+    }
+
+    return len;
+}
+
+double my_atof(char *arr)
+{
+    double val = 0;
+    int afterdot = 0;
+    double scale = 1;
+    int neg = 0;
+
+    if (*arr == '-')
+    {
+        arr++;
+        neg = 1;
+    }
+    while (*arr)
+    {
+        if (afterdot)
+        {
+            scale = scale / 10;
+            val = val + (*arr - '0') * scale;
+        }
+        else
+        {
+            if (*arr == '.')
+            {
+                afterdot++;
+            }
+            else
+            {
+                val = val * 10.0 + (*arr - '0');
+            }
+        }
+        arr++;
+    }
+    if (neg)
+        return -val;
+    else
+        return val;
+}
+
+void func_q(double a, double b, double c)
 {
     double EPS = 0.0001;
     double D = b * b - 4.0 * a * c;
@@ -11,28 +92,25 @@ double func_q(double a, double b, double c)
     if (D < 0)
     {
         printf("Еhere are no solutions");
-        return 1;
     }
-    else if ((fabs(D) < EPS))
+    else if (fabs(D) < EPS)
     {
         x1 = -b / (2.0 * a);
         printf("%lf", x1);
-        return 0;
     }
     else
     {
         x1 = (-b - sqrt(D)) / (2.0 * a);
         x2 = (-b + sqrt(D)) / (2.0 * a);
-        printf("%lf%lf", x1, x2);
-        return 0;
+        printf("%lf %lf", floor(x1), floor(x2));
     }
 }
 
-int func_m(int n, int m)
+void func_m(int n, int m)
 {
     if (m % n == 0)
     {
-        return printf("Yes");
+        printf("Yes");
     }
     else
     {
@@ -40,61 +118,74 @@ int func_m(int n, int m)
     }
 }
 
-double func_t(double num1, double num2, double num3)
+void func_t(int num1, int num2, int num3)
 {
-    if ((num1 == num2 + num3) || (num2 == num1 + num3) || (num3 == num1 + num2))
+    int tmp;
+    if (num1 > num2)
     {
-        return printf("Yes it is triangle");
+        tmp = num1;
+        num1 = num2;
+        num2 = tmp;
+    }
+    if (num2 > num3)
+    {
+        tmp = num2;
+        num2 = num3;
+        num3 = tmp;
+    }
+    if (num1 * num1 + num2 * num2 == num3 * num3)
+    {
+        printf("Yes it is triangle");
     }
     else
     {
-        return printf("No");
+        printf("No");
     }
 }
 
 int main(int argc, char *argv[])
 {
 
-    if (strlen(argv[1]) != 2 || argv[1][0] != '-' && argv[1][0] != '/')
+    if (my_strlen(argv[1]) != 2 || argv[1][0] != '-' && argv[1][0] != '/')
     {
-        printf("Input error: wrong flag");
+        printf(ErrorNames[WRONG_INPUT - 1]);
         return 0;
     }
     if (argc < 3)
     {
-        printf("Input error: few arguments!");
+        printf(ErrorNames[FEW_ARGUMENTS - 1]);
         return 0;
     }
     if (argv[1][1] == 'q')
     {
         if (argc != 5)
         {
-            printf("Input error: few arguments!");
+            printf(ErrorNames[FEW_ARGUMENTS - 1]);
             return 0;
         }
-        func_q(strtod(argv[2], &argv[2]), strtod(argv[3], &argv[3]), strtod(argv[4], &argv[4]));
+        func_q(my_atof(argv[2]), my_atof(argv[3]), my_atof(argv[4]));
     }
     else if (argv[1][1] == 'm')
     {
         if (argc != 4)
         {
-            printf("Input error: few arguments!");
+            printf(ErrorNames[FEW_ARGUMENTS - 1]);
             return 0;
         }
-        func_m(atoi(argv[2]), atoi(argv[3]));
+        func_m(my_atoi(argv[2]), my_atoi(argv[3]));
     }
     else if (argv[1][1] == 't')
     {
         if (argc != 5)
         {
-            printf("Input error: few arguments!");
+            printf(ErrorNames[FEW_ARGUMENTS - 1]);
             return 0;
         }
-        func_t(strtod(argv[2], &argv[2]), strtod(argv[3], &argv[3]), strtod(argv[4], &argv[4]));
+        func_q(my_atoi(argv[2]), my_atoi(argv[3]), my_atoi(argv[4]));
     }
     else
     {
-        printf("Input error: wrong flag!");
+        printf(ErrorNames[WRONG_INPUT - 1]);
     }
 
     return 0;
