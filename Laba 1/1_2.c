@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
-static char *ErrorNames[] = {
+const char *ErrorNames[] = {
     "Not opening file",
     "Out of Memory",
     "Not this index",
@@ -84,26 +84,27 @@ double my_atof(char *arr)
         return val;
 }
 
-void func_q(double a, double b, double c)
+int func_q(double a, double b, double c, double *res, double *res2)
 {
     double EPS = 0.0001;
     double D = b * b - 4.0 * a * c;
-    double x1, x2;
-    if (D < 0)
+    if (D < -EPS)
     {
-        printf("Еhere are no solutions");
+        return 0;
     }
     else if (fabs(D) < EPS)
     {
-        x1 = -b / (2.0 * a);
-        printf("%lf", x1);
+        *res = -b / (2.0 * a);
+        return 1;
     }
     else
     {
-        x1 = (-b - sqrt(D)) / (2.0 * a);
-        x2 = (-b + sqrt(D)) / (2.0 * a);
-        printf("%lf %lf", floor(x1), floor(x2));
+        *res = (-b - sqrt(D)) / (2.0 * a);
+        *res2 = (-b + sqrt(D)) / (2.0 * a);
+        return 2;
     }
+
+    return 0;
 }
 
 void func_m(int n, int m)
@@ -145,7 +146,7 @@ void func_t(int num1, int num2, int num3)
 
 int main(int argc, char *argv[])
 {
-
+    double x1, x2;
     if (my_strlen(argv[1]) != 2 || argv[1][0] != '-' && argv[1][0] != '/')
     {
         printf(ErrorNames[WRONG_INPUT - 1]);
@@ -163,7 +164,15 @@ int main(int argc, char *argv[])
             printf(ErrorNames[FEW_ARGUMENTS - 1]);
             return 0;
         }
-        func_q(my_atof(argv[2]), my_atof(argv[3]), my_atof(argv[4]));
+        // switch (func_q(my_atof(argv[2]), my_atof(argv[3]), my_atof(argv[4]), &x1, &x2))
+        // {
+        // case 0:
+        //     printf("No roots");
+        //     break;
+        // case 1:
+
+        //     break;
+        // }
     }
     else if (argv[1][1] == 'm')
     {
@@ -181,7 +190,7 @@ int main(int argc, char *argv[])
             printf(ErrorNames[FEW_ARGUMENTS - 1]);
             return 0;
         }
-        func_q(my_atoi(argv[2]), my_atoi(argv[3]), my_atoi(argv[4]));
+        func_t(my_atoi(argv[2]), my_atoi(argv[3]), my_atoi(argv[4]));
     }
     else
     {
