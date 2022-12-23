@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-static char *ErrorNames[] = {
+const char *ErrorNames[] = {
     "Not opening file",
     "Out of Memory",
     "Not this index",
@@ -58,7 +58,7 @@ void print(int *res, int size)
     printf("\n");
 }
 
-void func_a(int *res, int *arr, int size)
+int func_a(int *res, int *arr, int size)
 {
     int k = 0;
     for (int i = 0; i < size; i++)
@@ -69,11 +69,10 @@ void func_a(int *res, int *arr, int size)
             k++;
         }
     }
-
-    print(res, k);
+    return k;
 }
 
-void func_b(int *res, int *arr, int size)
+int func_b(int *res, int *arr, int size)
 {
     int k = 0;
     for (int i = 0; i < size; i++)
@@ -84,7 +83,7 @@ void func_b(int *res, int *arr, int size)
             k++;
         }
     }
-    print(res, k);
+    return k;
 }
 
 int func_c(int number, int *arr, int size)
@@ -209,6 +208,7 @@ int main()
         return -1;
     }
     int size_max = 128, index;
+    int size_res;
     int *arr = (int *)malloc(sizeof(int) * size_max);
     int *res = (int *)malloc(sizeof(int) * size_max);
 
@@ -234,13 +234,16 @@ int main()
         printf("Array: ");
         print(arr, size_nuw);
         printf("Result: ");
-        func_a(res, arr, size_nuw);
+        printf("%d\n", size_res);
+        size_res = func_a(res, arr, size_nuw);
+        print(res, size_res);
         break;
     case 2:
         printf("Array: ");
         print(arr, size_nuw);
         printf("Result: ");
-        func_b(res, arr, size_nuw);
+        size_res = func_b(res, arr, size_nuw);
+        print(res, size_res);
         break;
     case 3:
         printf("Enter index: ");
