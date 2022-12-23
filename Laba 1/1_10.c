@@ -1,86 +1,172 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
-int print_matrix(int **res, int N, int M)
+const double EPS = 1E-9;
+
+typedef enum Errors
+{
+    ok,
+    memory_allocation_error,
+    range_error,
+    multi_error
+
+} Errors;
+
+void free_matrix(double **matrix, int n, int m)
+{
+    for (int i = 0; i < n; i++)
+    {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+void print_matrix(double **res, int N, int M)
 {
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < M; j++)
         {
-            printf("%d ", res[i][j]);
+            printf("%lf ", res[i][j]);
         }
         printf("\n");
     }
 }
 
-void generate_matrix(int **matrix, int N, int M)
+// typedef struct dinamic_array
+// {
+//     int **matrix;
+// } dinamic_array;
+
+double **generate_matrix(Errors *status_code, int n, int m)
 {
-    for (int i = 0; i < N; i++)
+
+    double **matrix;
+
+    if (n < 1 || n > 10 || m < 1 || m > 10)
     {
-        for (int j = 0; j < M; j++)
+        *status_code = range_error;
+        return matrix;
+    }
+
+    matrix = (double **)malloc(sizeof(double *) * n);
+    for (int i = 0; i < m; i++)
+    {
+        matrix[i] = (double *)malloc(sizeof(double) * m);
+        if (matrix[i] == NULL)
         {
-            matrix[i][j] = rand() % 201 - 100;
+            *status_code = memory_allocation_error;
+            return matrix;
         }
     }
+    if (matrix == NULL)
+    {
+        *status_code = memory_allocation_error;
+        return matrix;
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            matrix[i][j] = (double)rand() / (double)RAND_MAX * 200 - 100;
+        }
+    }
+    *status_code = ok;
+    return matrix;
 }
 
-int proiz_matrix(int **res, int **A, int **B, int N, int M)
+double **multi_matrix(Errors *status_code, double **A, double **B, int n, int m, int row2, int column1)
 {
-    for (int i = 0; i < N; i++)
+    double **res;
+
+    if (column1 != row2)
     {
-        for (int j = 0; j < M; j++)
+        *status_code = multi_error;
+        return res;
+    }
+    res = (double **)malloc(sizeof(double *) * n);
+    if (res == NULL)
+    {
+        *status_code = memory_allocation_error;
+        return res;
+    }
+    for (int i = 0; i < m; i++)
+    {
+        res[i] = (double *)malloc(sizeof(double) * m);
+        if (res[i] == NULL)
+        {
+            *status_code = memory_allocation_error;
+            free_matrix(res, n, i);
+            return res;
+        }
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
         {
             res[i][j] = 0;
-            for (int k = 0; k < N; k++)
+            for (int k = 0; k < n; k++)
             {
                 res[i][j] += A[i][k] * B[k][j];
             }
         }
     }
 
-    return print_matrix(res, N, M);
-}
-
-int **matr(int **a, int n, int x)
-{
-    int **res = (int **)malloc((n - 1) * sizeof(int *));
-    for (int i = 0; i < n - 1; ++i)
-        res[i] = (int *)malloc((n - 1) * sizeof(int));
-    for (int i = 1; i < n; ++i)
-        for (int j = 0, k = 0; j < n; ++j, ++k)
-        {
-            if (j == x)
-            {
-                --k;
-                continue;
-            }
-            res[i - 1][k] = a[i][j];
-        }
+    *status_code = ok;
     return res;
 }
 
-int det(int **a, int n)
+void swap(double *num1, double *num2)
 {
-    if (n == 1)
-        return a[0][0];
-    if (n == 2)
-        return (a[1][1] * a[0][0]) - (a[0][1] * a[1][0]);
-    int ans = 0, sig = 1;
-    for (int i = 0; i < n; ++i)
-    {
-        ans += (sig * a[0][i] * det(matr(a, n, i), n - 1));
-        sig *= -1;
-    }
-    return ans;
+    double tmp;
+    tmp = *num1;
+    *num1 = *num2;
+    *num2 = tmp;
 }
 
+double det(double **matrix, int n)
+{
+    double det = 1;
+    if (n == 2)
+    {
+        det = matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
+        return det;
+    }
+    for (int i = 0; i < n; ++i)
+    {
+        int k = i;
+        for (int j = i + 1; j < n; ++j)
+            if (fabs(matrix[j][i]) > fabs(matrix[k][i]))
+                k = j;
+        if (fabs(matrix[k][i]) < EPS)
+        {
+            det = 0;
+            break;
+        }
+        swap(matrix[i], matrix[k]);
+        if (i != k)
+            det = -det;
+        det *= matrix[i][i];
+        for (int j = i + 1; j < n; ++j)
+            matrix[i][j] /= matrix[i][i];
+        for (int j = 0; j < n; ++j)
+            if (j != i && fabs(matrix[j][i]) > EPS)
+                for (int k = i + 1; k < n; ++k)
+                    matrix[j][k] -= matrix[i][k] * matrix[j][i];
+    }
+    return det;
+}
 int main()
 {
 
     srand(time(0));
-    int row1, column1;
-    int row2, column2;
+    int row1 = 0, column1 = 0;
+    int row2 = 0, column2 = 0;
+    Errors status_code;
 
     printf("1. Ganarate matrix.\n");
     printf("2. Matrix multiplication.\n");
@@ -95,28 +181,22 @@ int main()
     if (input == 1)
     {
         printf("Enter row and column: ");
-        scanf("%d", &row1, column1);
-        if ((row1 >= 1) && (row1 <= 10) && (column1 >= 1) && (column1 <= 10))
-        {
-            int **A = (int **)malloc(sizeof(int *) * row1);
-            for (int i = 0; i < column1; i++)
-            {
-                A[i] = (int *)malloc(sizeof(int) * column1);
-            }
-            if (A == NULL)
-            {
-                printf("Error: not memory");
-                return -1;
-            }
+        scanf("%d%d", &row1, &column1);
 
-            generate_matrix(A, row1, column1);
-            print_matrix(A, row1, column1);
-            free(A);
-        }
-        else
+        double **A;
+        A = generate_matrix(&status_code, row1, column1);
+        switch (status_code)
         {
+        case ok:
+            print_matrix(A, row1, column1);
+            free_matrix(A, row1, column1);
+            break;
+        case memory_allocation_error:
+            printf("Error: not memory");
+            break;
+        case range_error:
             printf("Enter in the range [1..10]");
-            return -1;
+            break;
         }
     }
     else if ((input > 1) && (input <= 3))
@@ -125,86 +205,42 @@ int main()
         scanf("%d%d", &row1, &column1);
         printf("Enter row and column for matrix 2: ");
         scanf("%d%d", &row2, &column2);
-
-        if ((row1 >= 1) && (row1 <= 10) && (column1 >= 1) && (column1 <= 10) && (row2 >= 1) && (row2 <= 10) && (column2 >= 1) && (column2 <= 10))
+        if ((input == 3) && ((row1 != column1) && (row2 != column2)))
         {
-            if (column1 != row2)
-            {
-                printf("Error: column1 != row2");
-                return -1;
-            }
-            else if ((input == 3) && ((row1 != column1) || (row2 != column2)))
-            {
-                printf("Error: non-quadratic matrix\n");
-                printf("It is not possible to calculate");
-                return -1;
-            }
-            else
-            {
-                int **A = (int **)malloc(sizeof(int *) * row1);
-                for (int i = 0; i < column1; i++)
-                {
-                    A[i] = (int *)malloc(sizeof(int) * column1);
-                }
-                if (A == NULL)
-                {
-                    printf("Error: not memory");
-                    return -1;
-                }
-
-                generate_matrix(A, row1, column1);
-                printf("Matrix 1: \n");
-                print_matrix(A, row1, column1);
-                if (input == 3)
-                {
-                    printf("Det Matrix 1: %d\n", det(A, row1));
-                }
-
-                int **B = (int **)malloc(sizeof(int *) * row2);
-                for (int i = 0; i < column1; i++)
-                {
-                    B[i] = (int *)malloc(sizeof(int) * column2);
-                }
-                if (B == NULL)
-                {
-                    printf("Error: not memory");
-                    return -1;
-                }
-
-                generate_matrix(B, row2, column2);
-                printf("Matrix 2: \n");
-                print_matrix(B, row2, column2);
-                if (input == 3)
-                {
-                    printf("Det Matrix 2: %d\n", det(B, row2));
-                }
-
-                int **result = (int **)malloc(sizeof(int *) * row1);
-                for (int i = 0; i < column2; i++)
-                {
-                    result[i] = (int *)malloc(sizeof(int) * column2);
-                }
-                if (result == NULL)
-                {
-                    printf("Error: not memory");
-                    return -1;
-                }
-
-                printf("Matrix multiplication: \n");
-                proiz_matrix(result, A, B, row1, column2);
-                if (input == 3)
-                {
-                    printf("Det multiplication: %d\n", det(result, row1));
-                }
-                free(A);
-                free(B);
-                free(result);
-            }
+            printf("Error: non-quadratic matrix\n");
+            printf("It is not possible to calculate");
+            return 0;
         }
-        else
+        double **A = generate_matrix(&status_code, row1, column1);
+        double **B = generate_matrix(&status_code, row2, column2);
+        double **result = multi_matrix(&status_code, A, B, row1, column2, row2, column1);
+
+        switch (status_code)
         {
-            printf("Enter in the range [1..10]");
-            return -1;
+        case ok:
+            printf("Matrix 1: \n");
+            print_matrix(A, row1, column1);
+            printf("Matrix 2: \n");
+            print_matrix(B, row2, column2);
+            printf("Matrix multiplication: \n");
+            print_matrix(result, row1, column2);
+            if (input == 3)
+            {
+
+                printf("Det Matrix 1: %lf\n", det(A, row1));
+                printf("Det Matrix 2: %lf\n", det(B, row2));
+                printf("Det multiplication: %lf\n", det(result, row1));
+            }
+            free_matrix(A, row1, column1);
+            free_matrix(B, row2, column2);
+            free_matrix(result, row1, column2);
+            break;
+        case memory_allocation_error:
+            printf("Error: not memory");
+            break;
+        case multi_error:
+            printf("Error: column1 != row2 ");
+            break;
         }
     }
     else
