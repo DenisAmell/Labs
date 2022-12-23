@@ -72,7 +72,7 @@ void to_ascii(char *str, int size, FILE *out)
         fprintf(out, "%d", str[i]);
 }
 
-int func_d(FILE *file, FILE *out)
+void func_d(FILE *file, FILE *out)
 {
     char sym;
     while ((sym = fgetc(file)) != EOF)
@@ -82,7 +82,7 @@ int func_d(FILE *file, FILE *out)
     }
 }
 
-int func_i(FILE *file, FILE *out)
+void func_i(FILE *file, FILE *out)
 {
     char sym;
     while ((sym = fgetc(file)) != EOF)
@@ -107,7 +107,7 @@ int help_for_i(FILE *file, char sym)
     }
     return count;
 }
-int func_s(FILE *file, FILE *out)
+void func_s(FILE *file, FILE *out)
 {
     char sym;
     while ((sym = fgetc(file)) != EOF)
@@ -134,7 +134,7 @@ int help_for_s(FILE *file, char sym)
     return count;
 }
 
-int func_a(FILE *file, FILE *out)
+void func_a(FILE *file, FILE *out)
 {
     char sym;
     while ((sym = fgetc(file)) != EOF)
@@ -150,7 +150,7 @@ int func_a(FILE *file, FILE *out)
     }
 }
 
-int func_f(FILE *file, FILE *out)
+void func_f(FILE *file, FILE *out)
 {
     char sym;
     int count = 0, i = 0;
@@ -172,9 +172,9 @@ int func_f(FILE *file, FILE *out)
         str[i] = '\0';
         count++;
 
-        if (count % 2 == 0 && count % 5 == 0)
+        if (count % 2 == 0 && count % 5 == 0) // count % 10 == 0
             to_ascii(uppercase(str, i), i, out);
-        else if (count % 2 == 0)
+        else if (count % 2 == 0) // !(count & 1)
             fputs(uppercase(str, i), out);
         else if (count % 5 == 0)
             to_ascii(str, i, out);
