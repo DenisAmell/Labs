@@ -1,9 +1,48 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include <string.h>
 
 char *sc = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+int my_atoi(char s[])
+{
+    int n = 0, flag = 1;
+    for (int i = 0; s[i] >= '0' && s[i] <= '9'; ++i)
+    {
+        if (s[i] == '-')
+        {
+            flag = -1;
+            continue;
+        }
+        n = 10 * n + (s[i] - '0');
+    }
+    n *= flag;
+    return n;
+}
+
+int my_strlen(char s[])
+{
+    int len = 0;
+    for (int i = 0; s[i] != '\0'; i++)
+    {
+        len++;
+    }
+
+    return len;
+}
+
+int my_strcmp(const char *s1, const char *s2)
+{
+    const unsigned char *p1 = (const unsigned char *)s1;
+    const unsigned char *p2 = (const unsigned char *)s2;
+
+    while (*p1 && *p1 == *p2)
+    {
+        ++p1, ++p2;
+    }
+
+    return (*p1 > *p2) - (*p2 > *p1);
+}
 
 int print(char *res, int SIZE)
 {
@@ -13,19 +52,19 @@ int print(char *res, int SIZE)
     }
 }
 
-int ten_into_n(unsigned int num, int r, char *res, size_t SIZE)
+void ten_into_n(unsigned int num, int r, char *res, size_t SIZE)
 {
     int count = 0;
     int temp = num;
     int k = 0;
-    for (int i = 0; i <= SIZE; i++)
+    for (int i = 0; i < SIZE; i++)
     {
         if (count >= SIZE)
         {
-            SIZE <<= 1;
+            SIZE *= 2;
             res = (char *)realloc(res, SIZE * sizeof(char *));
-        }
-        if (num <= r)
+        } // 10
+        if (num < r)
         {
             k = num;
             res[i] = sc[k];
@@ -41,13 +80,15 @@ int ten_into_n(unsigned int num, int r, char *res, size_t SIZE)
             count++;
         }
     }
-    return print(res, count);
+    print(res, count);
 }
 
 int to_dec(char *num, int r)
 {
-    int len = strlen(num) - 1;
+    int len = my_strlen(num) - 1;
     int res = 0, base = 1;
+    int flag = 1;
+
     for (int i = len; i >= 0; i--)
     {
         if (num[i] >= '0' && num[i] <= '9')
@@ -60,21 +101,25 @@ int to_dec(char *num, int r)
             res += (num[i] - 55) * base;
             base *= r;
         }
+        if (num[i] == '-')
+        {
+            flag = -1;
+        }
     }
+    res *= flag;
     return res;
 }
-
 int proverka(char num[100], int r)
 {
-    int len = strlen(num);
+    int len = my_strlen(num);
     for (int i = 0; i < len; i++)
     {
         if (num[i] >= sc[r])
         {
             return 0;
-            break;
         }
     }
+    return 1;
 }
 
 int main(int argc, char *argv[])
@@ -90,24 +135,23 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    printf("Enter r: ");
+    printf("Enter base: ");
     scanf("%d", &r);
     if ((r < 2) || (r > 32))
     {
-        printf("The number does not fall into the range [2...36]");
+        printf("The number does not fall into the range [2...32]");
         return -1;
     }
 
-    int i = 0;
     int num_max = 0;
     int num1;
     while (scanf("%100s", num))
     {
-        if (strcmp(num, template) == 0)
+        if (my_strcmp(num, template) == 0)
         {
             break;
         }
-        else if (atoi(num) == 0 && r <= 9)
+        else if (my_atoi(num) == 0 && r <= 9)
         {
             printf("No number\n");
             continue;
@@ -119,9 +163,9 @@ int main(int argc, char *argv[])
         }
 
         num1 = to_dec(num, r);
-        if (abs(num1) > num_max)
+        if (fabs(num1) > num_max)
         {
-            num_max = num1;
+            num_max = fabs(num1);
         }
     }
 
