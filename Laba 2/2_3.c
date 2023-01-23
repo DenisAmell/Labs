@@ -43,7 +43,7 @@ double lim_pi(double eps)
 {
     double n = 1;
     double an = pow((pow(2, n) * fact(n)), 4) / (n * pow(fact(2 * n), 2.0));
-    double an_1 = pow((pow(2, n + 1) * fact(n + 1)), 4) / ((n + 1) * pow(fact(2 * (n + 1)), 2));
+    double an_1 = pow((pow(2, n + 1) * fact(n + 1)), 4) / ((n + 1) * pow(fact(2 * (n + 1)), 2.0));
     while (eps < fabs(an_1 - an))
     {
         n++;
@@ -84,7 +84,7 @@ double lim_sqr(double eps)
 double summa(double m)
 {
     double k = 1;
-    double sum = 1;
+    double sum = 0;
 
     while (k <= m)
     {
@@ -113,10 +113,10 @@ double lim_gamma(double eps)
 double sum_e(double eps)
 {
     double cur = 1;
-    double sum = 1;
+    double sum = 0;
     double n = 0;
 
-    while (fabs(cur) >= eps)
+    while (fabs(cur) > eps)
     {
         cur = 1 / fact(n);
         sum += cur;
@@ -128,8 +128,8 @@ double sum_e(double eps)
 double sum_pi(double eps)
 {
     double cur = 1;
-    double sum = 1;
-    double n = 0;
+    double sum = 0;
+    double n = 1;
 
     while (fabs(cur) >= eps)
     {
@@ -179,12 +179,12 @@ double sum_gamma(double eps)
 
     while (fabs(cur) >= eps)
     {
-        cur = 1 / pow((int)sqrt(n), 2) - (1 / n);
+        cur = 1 / pow(floorf(sqrt(n)), 2) - (1 / n);
         sum += cur;
         n++;
     }
 
-    return sum - (sum_pi(0.0001) * sum_pi(0.0001) / 6);
+    return (pow(sum_pi(eps), 2) / 6) - sum;
 }
 
 double f_e(double x)
@@ -214,14 +214,14 @@ double f_sqr(double x)
 
 double multy_gamma(double t)
 {
-    int p = 1;
+    int p = 2;
     double mult = 1;
 
     while (p <= t)
     {
         if (isPrime(p))
         {
-            mult *= (p - 1) / p;
+            mult *= (1.0 - 1.0 / p);
         }
         p++;
     }
@@ -252,13 +252,47 @@ double count_gamma(double eps)
     while (r - l > eps)
     {
         c = (l + r) / 2;
-        if (f_e(c) * f_e(r) < 0)
+        if (f_gamma(c, eps) * f_gamma(r, eps) < 0)
             l = c;
         else
             r = c;
     }
     return (l + r) / 2;
 }
+
+// double symb_p(int t)
+// {
+//     double x = 1.0;
+//     for (int i = 2; i <= t; i++)
+//     {
+//         if (isPrime)
+//         {
+//             x *= (1.0 - 1.0 / i);
+//         }
+//     }
+//     return x;
+// }
+
+// double mult_gamma(double eps)
+// {
+//     double tmp1 = 0;
+//     double tmp2 = 0;
+//     for (int t = 2;; t++)
+//     {
+//         tmp1 = tmp2;
+//         tmp2 = log(t) * symb_p(t);
+//         if (fabs(tmp2 - tmp1) < eps)
+//         {
+//             break;
+//         }
+//     }
+//     return tmp2;
+// }
+
+// double count_gamma(double x)
+// {
+//     return exp(-x) - mult_gamma(0.001);
+// }
 
 double count_e(double eps)
 {
@@ -336,7 +370,7 @@ int main()
     printf("pi = %.10lf\n", lim_pi(eps));
     printf("ln2 = %.10lf\n", lim_ln(eps));
     printf("sqr(2) = %.10lf\n", lim_sqr(eps));
-    printf("gamma = %.10lf\n", lim_gamma(0.0001));
+    printf("gamma = %.10lf\n", lim_gamma(eps));
     printf("e = %.10lf\n", sum_e(eps));
     printf("pi = %.10lf\n", sum_pi(eps));
     printf("ln2 = %.10lf\n", sum_ln(eps));
