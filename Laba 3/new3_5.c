@@ -229,25 +229,25 @@ void trace_files(Student **studs, int avMarks, char *filename, int len)
         free(trace_filename);
     }
 
-    // trace_filename[filename_len - 2] = '3';
-    // if ((file3 = fopen(trace_filename, "w")) == NULL)
-    // {
-    //     printf("%s", trace_filename);
-    //     fclose(file1);
-    //     fclose(file2);
-    //     free(trace_filename);
-    // }
+    trace_filename[filename_len - 2] = '3';
+    if ((file3 = fopen(trace_filename, "w")) == NULL)
+    {
+        printf("%s", trace_filename);
+        fclose(file1);
+        fclose(file2);
+        free(trace_filename);
+    }
 
-    // trace_filename[filename_len - 2] = '4';
+    trace_filename[filename_len - 2] = '4';
 
-    // if ((file4 = fopen(trace_filename, "w")) == NULL)
-    // {
-    //     fclose(file1);
-    //     fclose(file2);
-    //     fclose(file3);
-    //     free(trace_filename);
-    // }
-    // free(trace_filename);
+    if ((file4 = fopen(trace_filename, "w")) == NULL)
+    {
+        fclose(file1);
+        fclose(file2);
+        fclose(file3);
+        free(trace_filename);
+    }
+    free(trace_filename);
     for (int i = 0; i < len; i++)
     {
 
