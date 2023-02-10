@@ -231,7 +231,7 @@ int (*search_byTo[4])(Student *, char[]) = {search_byId, search_byName, search_b
 
 int search_student(Student **res, Student *studs, int stud_count, int flag, char str[])
 {
-    if (flag <= 0 || flag > 5)
+    if (flag < 0 || flag > 5)
         return ERROR_INPUT;
     *res = (Student *)malloc(sizeof(Student) * stud_count);
     if (res == NULL)
