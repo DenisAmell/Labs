@@ -1,0 +1,5 @@
+/mnt/c/Users/Denis/OneDrive/Рабочий стол/LABS 4 SEM/log2/CMakeFiles/t1.dir
+/mnt/c/Users/Denis/OneDrive/Рабочий стол/LABS 4 SEM/log2/CMakeFiles/edit_cache.dir
+/mnt/c/Users/Denis/OneDrive/Рабочий стол/LABS 4 SEM/log2/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/Denis/OneDrive/Рабочий стол/LABS 4 SEM/log2/_deps/json-build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/Denis/OneDrive/Рабочий стол/LABS 4 SEM/log2/_deps/json-build/CMakeFiles/rebuild_cache.dir
