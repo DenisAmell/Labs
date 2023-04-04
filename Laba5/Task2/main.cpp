@@ -18,9 +18,8 @@ int main()
                                      ->add_stream("file2.txt", logger::severity::debug)
                                      ->add_stream("file3.txt", logger::severity::trace)
                                      ->construct();
-    int size = 100;
-    int *p = reinterpret_cast<int *>(allocator.allocate(size));
-
+    int size = 25;
+    int *p = reinterpret_cast<int *>(allocator.allocate(sizeof(int) * size));
     std::string log = "Allocated " + std::to_string(sizeof(int) * size) + " bytes";
     constructed_logger->log(log, logger::severity::trace);
 
@@ -31,9 +30,12 @@ int main()
     {
         p[i] = i;
 
-        // std::cout << p[i] << " " << p + i << std::endl;
+        std::cout << p[i] << " " << p + i << std::endl;
     }
 
+    unsigned char *byte = reinterpret_cast<unsigned char *>(p);
+
+    allocator.debug_alloc(byte, sizeof(int) * size, constructed_logger);
     allocator.deallocate(p);
 
     constructed_logger->log("Dellocated array", logger::severity::trace);
