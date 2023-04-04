@@ -8,7 +8,7 @@
 
 void *memory_denis::allocate(size_t target_size) const
 {
-    return ::operator new(sizeof(target_size));
+    return ::operator new(target_size);
 }
 void memory_denis::deallocate(void const *const target_to_dealloc) const
 {
