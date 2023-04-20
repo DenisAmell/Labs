@@ -6,6 +6,14 @@
 class memory
 {
 public:
+    enum class allocate_mode
+    {
+        first_fit,
+        best_fit,
+        worst_fit
+    };
+
+public:
     virtual void *allocate(size_t target_size) const = 0;
 
 public:
