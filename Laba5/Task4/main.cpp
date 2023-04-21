@@ -9,7 +9,8 @@ void allocator_demo_1(
 {
     logger_builder *builder = new logger_builder_concrete();
     logger *log = builder
-                      ->add_stream("boundary tags allocator.txt", logger::severity::debug)
+                      ->add_stream("file1.txt", logger::severity::trace)
+                      ->add_stream("file2.txt", logger::severity::debug)
                       ->construct();
 
     memory *allocator = new border_descriptors_memory(log, nullptr, 1000000, memory::allocate_mode::best_fit);
@@ -67,16 +68,22 @@ void allocator_demo_2()
 {
     logger_builder *builder = new logger_builder_concrete();
     logger *log = builder
-                      ->add_stream("gorschenko boundary tags allocator.txt", logger::severity::debug)
+                      ->add_stream("file1.txt", logger::severity::trace)
+                      ->add_stream("file2.txt", logger::severity::debug)
                       ->construct();
 
     memory *allocator = new border_descriptors_memory(log, nullptr, 1000000, memory::allocate_mode::first_fit);
 
-    auto *ptr = allocator->allocate(100);
+    int *ptr = reinterpret_cast<int *>(allocator->allocate(sizeof(int) * 25));
     auto *ptr2 = allocator->allocate(100);
+    for (int i = 0; i < 25; i++)
+    {
+        ptr[i] = i;
+    }
     allocator->deallocate(ptr);
-    ptr = allocator->allocate(99);
-
+    ptr = reinterpret_cast<int *>(allocator->allocate(99));
+    allocator->deallocate(ptr);
+    allocator->deallocate(ptr2);
     delete allocator;
     delete log;
     delete builder;
@@ -84,5 +91,5 @@ void allocator_demo_2()
 
 int main()
 {
-    allocator_demo_1(2500);
+    allocator_demo_1(1000000);
 }

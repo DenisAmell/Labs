@@ -35,7 +35,7 @@ size_t *border_descriptors_memory::get_block_size(void *target_ptr) const
     return reinterpret_cast<size_t *>(target_ptr);
 }
 
-logger *border_descriptors_memory::get_logger() const
+logger *border_descriptors_memory::get_logger() const noexcept
 {
     return *reinterpret_cast<logger **>(reinterpret_cast<unsigned char *>(_all_memory) + sizeof(size_t));
 }
@@ -77,6 +77,56 @@ std::pair<void *, size_t> border_descriptors_memory::get_aviable_block_address_a
     return {block_address, block_size};
 }
 
+std::string border_descriptors_memory::get_allocate_mode_string(allocate_mode method) const
+{
+    std::string allocate_mode;
+    switch (method)
+    {
+    case memory::allocate_mode::first_fit:
+        allocate_mode = "the first fit method";
+        break;
+
+    case memory::allocate_mode::best_fit:
+        allocate_mode = "the best fit method";
+        break;
+    default:
+        allocate_mode = "the worst fit method";
+        break;
+    }
+    return allocate_mode;
+}
+
+std::string border_descriptors_memory::get_pointer_address(void *target_ptr) const
+{
+
+    char str[20];
+    memset(str, 0, 20);
+    sprintf(str, "%p", target_ptr);
+    std::string add;
+    add.append(str);
+    return add;
+}
+
+void border_descriptors_memory::debug_alloc(const void *target_ptr) const
+{
+    logger *log = get_logger();
+    if (log == nullptr)
+    {
+        return;
+    }
+    unsigned char *ptr = reinterpret_cast<unsigned char *>(reinterpret_cast<size_t *>(const_cast<void *>(target_ptr)) + 1) + 2 * sizeof(void *);
+    size_t size = *get_block_size(const_cast<void *>(target_ptr));
+    std::string buff;
+    for (int i = 0; i < size; i++)
+    {
+        unsigned short tmp = static_cast<unsigned short>(*ptr);
+        buff.append(std::to_string(tmp) + ' ');
+        ptr++;
+    }
+    std::string add = get_pointer_address(const_cast<void *>(target_ptr));
+    std::string massege = "Block at address " + add + " state before deallocation:\n[ " + buff + "]";
+    log->log(massege, logger::severity::debug);
+}
 void border_descriptors_memory::dump_allocator_state(bool is_allocate) const noexcept
 {
     auto *log = get_logger();
@@ -202,8 +252,8 @@ void *border_descriptors_memory::allocate(size_t requested_block_size) const
 
     if (target_block_size - requested_block_size - serv_occup_block_size < serv_occup_block_size)
     {
+        this->trace_with_guard("Size has changed: " + std::to_string(requested_block_size) + "->" + std::to_string(target_block_size - serv_occup_block_size));
         requested_block_size = target_block_size - serv_occup_block_size;
-        // TODO: logs
     }
 
     *reinterpret_cast<size_t *>(target_block) = requested_block_size;
@@ -224,7 +274,7 @@ void *border_descriptors_memory::allocate(size_t requested_block_size) const
     {
         *get_pointer_prev_block(next_to_target_block) = target_block;
     }
-
+    this->trace_with_guard("Allocate is " + get_allocate_mode_string(alloc_method));
     dump_allocator_state(true);
     return reinterpret_cast<void *>(reinterpret_cast<void **>(reinterpret_cast<size_t *>(target_block) + 1) + 2);
 }
@@ -232,6 +282,7 @@ void *border_descriptors_memory::allocate(size_t requested_block_size) const
 void border_descriptors_memory::deallocate(const void *const target_to_dealloc) const
 {
     auto true_target_to_dealloc = reinterpret_cast<void *>(reinterpret_cast<unsigned char *>(const_cast<void *>(target_to_dealloc)) - get_serv_occup_block());
+    debug_alloc(true_target_to_dealloc);
     auto *previous_to_target_block = *get_pointer_prev_block(const_cast<void *>(true_target_to_dealloc));
     auto *next_to_target_block = *get_pointer_next_block(const_cast<void *>(true_target_to_dealloc));
     auto const service_part_allocator_size = get_service_part_allocator_size();
@@ -263,6 +314,8 @@ border_descriptors_memory::border_descriptors_memory(logger *log, memory *alloca
     *alloc_block = allocator;
     auto first_occup_next_block = reinterpret_cast<void **>(alloc_block + 1);
     *first_occup_next_block = nullptr;
+
+    this->trace_with_guard("Boundary tags system allocator initialized!");
 }
 
 border_descriptors_memory::~border_descriptors_memory()
@@ -271,10 +324,15 @@ border_descriptors_memory::~border_descriptors_memory()
     {
         return;
     }
-
+    auto *got_logger = get_logger();
     auto *outer_allocator = *reinterpret_cast<memory **>(reinterpret_cast<unsigned char *>(_all_memory) + sizeof(size_t) + sizeof(logger *) + sizeof(memory::allocate_mode));
 
     outer_allocator == nullptr
         ? ::operator delete(_all_memory)
         : outer_allocator->deallocate(_all_memory);
+
+    if (got_logger != nullptr)
+    {
+        got_logger->log("Destructor executed successfully", logger::severity::trace);
+    }
 }
