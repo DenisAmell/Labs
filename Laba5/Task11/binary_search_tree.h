@@ -147,9 +147,8 @@ protected:
 
         virtual void after_insert_inner(
             tkey const &key,
-            tvalue const &value,
-            node *&subtree_root_address,
-            std::stack<node **> &path_to_subtree_root_exclusive);
+            typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
+            std::stack<typename binary_search_tree<tkey, tvalue, tkey_comparer>::node **> &path_to_subtree_root_exclusive);
 
         virtual size_t get_node_size() const;
 
@@ -239,8 +238,8 @@ protected:
 
         virtual void after_remove_inner(
             tkey const &key,
-            node *&subtree_root_address,
-            std::list<node **> &path_to_subtree_root_exclusive);
+            typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
+            std::list<typename binary_search_tree<tkey, tvalue, tkey_comparer>::node **> &path_to_subtree_root_exclusive);
 
     private:
         template <typename T>
@@ -339,9 +338,33 @@ public:
     postfix_iterator end_postfix() const noexcept;
 
 protected:
-    void left_rotation(node *&subtree_root) const;
-    void right_rotation(node *&subtree_root) const;
+    virtual void left_rotation(node *&subtree_root) const;
+    virtual void right_rotation(node *&subtree_root) const;
 };
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+void binary_search_tree<tkey, tvalue, tkey_comparer>::left_rotation(node *&subtree_root) const
+{
+    node *tmp = subtree_root;
+    subtree_root = subtree_root->right_subtree_address;
+    tmp->right_subtree_address = subtree_root->left_subtree_address;
+    subtree_root->left_subtree_address = tmp;
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+void binary_search_tree<tkey, tvalue, tkey_comparer>::right_rotation(node *&subtree_root) const
+{
+    node *tmp = subtree_root;
+    subtree_root = subtree_root->left_subtree_address;
+    tmp->left_subtree_address = subtree_root->right_subtree_address;
+    subtree_root->right_subtree_address = tmp;
+}
 
 // region iterators implementation
 
@@ -766,18 +789,6 @@ typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *binary_search_tr
 
 // endregion iterators implementation
 
-template <
-    typename tkey,
-    typename tvalue,
-    typename tkey_compare>
-void binary_search_tree<tkey, tvalue, tkey_compare>::left_rotation(binary_search_tree<tkey, tvalue, tkey_compare>::node *&subtree_root) const
-{
-    node *temp = subtree_root;
-    subtree_root = subtree_root->right_subtree_address;
-    temp->right_subtree_address = subtree_root->left_subtree_address;
-    subtree_root->lef_subtree_address = temp;
-}
-
 // region template methods implementation
 
 // region insertion implementation
@@ -848,7 +859,7 @@ void binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method:
         insert_inner(key, std::move(value), res_functor > 0 ? subtree_root_address->right_subtree_address : subtree_root_address->left_subtree_address, path_to_subtree_root_exclusive);
         path_to_subtree_root_exclusive.pop();
     }
-    after_insert_inner(key, value, subtree_root_address, path_to_subtree_root_exclusive);
+    after_insert_inner(key, subtree_root_address, path_to_subtree_root_exclusive);
 }
 
 template <
@@ -869,9 +880,8 @@ template <
     typename tkey_comparer>
 void binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method::after_insert_inner(
     tkey const &key,
-    tvalue const &value,
-    binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
-    std::stack<binary_search_tree<tkey, tvalue, tkey_comparer>::node **> &path_to_subtree_root_exclusive)
+    typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
+    std::stack<typename binary_search_tree<tkey, tvalue, tkey_comparer>::node **> &path_to_subtree_root_exclusive)
 {
 }
 
@@ -1125,8 +1135,8 @@ template <
     typename tkey_comparer>
 void binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method::after_remove_inner(
     tkey const &key,
-    binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
-    std::list<binary_search_tree<tkey, tvalue, tkey_comparer>::node **> &path_to_subtree_root_exclusive)
+    typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
+    std::list<typename binary_search_tree<tkey, tvalue, tkey_comparer>::node **> &path_to_subtree_root_exclusive)
 {
 }
 
@@ -1240,7 +1250,7 @@ void binary_search_tree<tkey, tvalue, tkey_comparer>::clear()
     auto it_end = end_postfix();
     for (auto it = begin_postfix(); it != it_end; ++it)
     {
-        std::cout << "gg" << std::endl;
+        // std::cout << "gg" << std::endl;
         it.get_current_node()->~node();
         deallocate_with_guard(it.get_current_node());
     }
