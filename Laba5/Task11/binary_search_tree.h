@@ -32,8 +32,7 @@ protected:
 
         node *right_subtree_address;
 
-        // public:
-        //     virtual ~node() = default;
+        virtual ~node() = default;
     };
 
 public:
@@ -117,7 +116,7 @@ public:
     };
 
 protected:
-    class insertion_template_method : protected memory_holder, private logger_holder
+    class insertion_template_method : protected memory_holder, protected logger_holder
     {
 
     public:
@@ -155,9 +154,9 @@ protected:
         virtual void call_constructor_node(node *mem, tkey const &key, tvalue &&value) const;
 
     private:
-        memory *get_memory() const override;
+        memory *get_memory() const final;
 
-        logger *get_logger() const override;
+        logger *get_logger() const final;
 
     private:
         binary_search_tree<tkey, tvalue, tkey_comparer> *_tree;
@@ -165,7 +164,7 @@ protected:
 
     // friend class insertion_template_method;
 
-    class reading_template_method : private logger_holder
+    class reading_template_method : protected logger_holder
     {
     private:
         binary_search_tree<tkey, tvalue, tkey_comparer> *_tree;
@@ -175,9 +174,6 @@ protected:
             : _tree(tree)
         {
         }
-
-    public:
-        virtual ~reading_template_method() = default;
 
     public:
         bool read(
@@ -202,10 +198,10 @@ protected:
             std::stack<node **> &path_to_subtree_root_exclusive);
 
     protected:
-        logger *get_logger() const override;
+        logger *get_logger() const final;
     };
 
-    class removing_template_method : private logger_holder, protected memory_holder
+    class removing_template_method : protected logger_holder, protected memory_holder
     {
     private:
         binary_search_tree<tkey, tvalue, tkey_comparer> *_tree;
@@ -217,15 +213,12 @@ protected:
         }
 
     public:
-        virtual ~removing_template_method() = default;
-
-    public:
-        tvalue &&remove(
+        tvalue remove(
             tkey const &key,
             node *&tree_root_address);
 
     private:
-        tvalue &&remove_inner(
+        tvalue remove_inner(
             tkey const &key,
             node *&subtree_root_address,
             std::list<node **> &path_to_subtree_root_exclusive);
@@ -256,9 +249,9 @@ protected:
         virtual void swap_additional_nodes_data(node *one_node, node *another_node);
 
     private:
-        memory *get_memory() const override;
+        memory *get_memory() const final;
 
-        logger *get_logger() const override;
+        logger *get_logger() const final;
     };
 
 private:
@@ -276,8 +269,7 @@ protected:
         reading_template_method *reading,
         removing_template_method *removing,
         memory *allocator = nullptr,
-        logger *logger = nullptr,
-        node *root = nullptr);
+        logger *logger = nullptr);
 
 public:
     explicit binary_search_tree(
@@ -306,7 +298,7 @@ public:
     bool find(
         typename associative_container<tkey, tvalue>::key_and_value_pair *target_key_and_result_value) final;
 
-    tvalue &&remove(
+    tvalue remove(
         tkey const &key) override;
 
 private:
@@ -821,9 +813,15 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-void binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method::call_constructor_node(node *mem, tkey const &key, tvalue &&value) const
+void binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method::call_constructor_node(
+    node *mem,
+    tkey const &key,
+    tvalue &&value) const
 {
-    new (mem) binary_search_tree<tkey, tvalue, tkey_comparer>::node{key, std::move(value), nullptr, nullptr};
+    new (mem) binary_search_tree<tkey, tvalue, tkey_comparer>::node;
+    mem->key = key;
+    mem->value = std::move(value);
+    mem->left_subtree_address = mem->right_subtree_address = nullptr;
 }
 
 template <
@@ -1003,19 +1001,19 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-tvalue &&binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method::remove(
+tvalue binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method::remove(
     tkey const &key,
     binary_search_tree<tkey, tvalue, tkey_comparer>::node *&tree_root_address)
 {
     std::list<binary_search_tree::node **> path_to_subtree_root_exclusive;
-    return std::move(remove_inner(key, tree_root_address, path_to_subtree_root_exclusive));
+    return remove_inner(key, tree_root_address, path_to_subtree_root_exclusive);
 }
 
 template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-tvalue &&binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method::remove_inner(
+tvalue binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method::remove_inner(
     tkey const &key,
     binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
     std::list<binary_search_tree<tkey, tvalue, tkey_comparer>::node **> &path_to_subtree_root_exclusive)
@@ -1024,6 +1022,8 @@ tvalue &&binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_meth
     if (subtree_root_address == nullptr)
     {
         this->warning_with_guard("Tree is empty");
+
+        // TODO: throw an exception
     }
 
     auto current_node = &subtree_root_address;
@@ -1051,7 +1051,7 @@ tvalue &&binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_meth
         this->warning_with_guard("Key not found");
     }
 
-    tvalue &&removed_value = std::move((*removed_node)->value);
+    tvalue removed_value = (*removed_node)->value;
 
     auto removal_complated = false;
 
@@ -1118,7 +1118,7 @@ tvalue &&binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_meth
 
     after_remove_inner(key, subtree_root_address, path_to_subtree_root_exclusive);
 
-    return std::move(removed_value);
+    return removed_value;
 }
 
 template <
@@ -1268,14 +1268,13 @@ binary_search_tree<tkey, tvalue, tkey_comparer>::binary_search_tree(
     binary_search_tree::reading_template_method *reading,
     binary_search_tree::removing_template_method *removing,
     memory *allocator,
-    logger *logger,
-    node *root)
+    logger *logger)
     : _insertion(insertion),
       _reading(reading),
       _removing(removing),
       _allocator(allocator),
       _logger(logger),
-      _root(root),
+      _root(nullptr),
       _comparator()
 
 {
@@ -1406,10 +1405,10 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-tvalue &&binary_search_tree<tkey, tvalue, tkey_comparer>::remove(
+tvalue binary_search_tree<tkey, tvalue, tkey_comparer>::remove(
     tkey const &key)
 {
-    return std::move(_removing->remove(key, _root));
+    return _removing->remove(key, _root);
 }
 
 // endregion associative_container contract implementation
