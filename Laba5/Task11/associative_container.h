@@ -27,6 +27,37 @@ public:
 
     virtual tvalue &&remove(
         tkey const &key) = 0;
+
+public:
+    void operator+=(key_and_value_pair pair);
+
+    bool operator[](key_and_value_pair *target_key_and_result_value);
+
+    tvalue &&operator-=(tkey const &key);
 };
+
+template <
+    typename tkey,
+    typename tvalue>
+void associative_container<tkey, tvalue>::operator+=(key_and_value_pair pair)
+{
+    insert(pair.key, std::move(pair.value));
+}
+
+template <
+    typename tkey,
+    typename tvalue>
+bool associative_container<tkey, tvalue>::operator[](key_and_value_pair *target_key_and_result_value)
+{
+    return find(target_key_and_result_value);
+}
+
+template <
+    typename tkey,
+    typename tvalue>
+tvalue &&associative_container<tkey, tvalue>::operator-=(const tkey &key)
+{
+    return std::move(remove(key));
+}
 
 #endif // ASSOCIATIVE_CONTAINER_H

@@ -34,6 +34,9 @@ private:
     virtual void *get_buddies(void *target_ptr) const = 0;
     virtual bool is_free_block(void *target_ptr) const = 0;
 
+protected:
+    virtual memory *get_memory() const = 0;
+
 public:
     virtual void *allocate(size_t target_size) const = 0;
 

@@ -1,0 +1,12 @@
+[trace][28.05.2023 20:19:38] List system allocator initialized!
+[trace][28.05.2023 20:19:38] Allocate is the first fit method
+[trace][28.05.2023 20:19:38] Memory state after allocation operation: |occpd 100|avlbl 999876|
+[trace][28.05.2023 20:19:38] Allocate is the first fit method
+[trace][28.05.2023 20:19:38] Memory state after allocation operation: |occpd 100|occpd 100|avlbl 999768|
+[debug][28.05.2023 20:19:38] Block at address 0x7fab31120034 state before deallocation:
+[ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+[trace][28.05.2023 20:19:38] Memory state after deallocation operation: |avlbl 92|occpd 100|avlbl 999768|
+[debug][28.05.2023 20:19:38] Size has changed: 99->100
+[trace][28.05.2023 20:19:38] Allocate is the first fit method
+[trace][28.05.2023 20:19:38] Memory state after allocation operation: |occpd 100|occpd 100|avlbl 999768|
+[trace][28.05.2023 20:19:38] Destructor executed successfully

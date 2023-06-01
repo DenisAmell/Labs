@@ -1,7 +1,7 @@
 #ifndef MEMORY_BUDDY_SYSTEM_H
 #define MEMORY_BUUDDY_SYSTEM_H
 
-#include "memory.h"
+#include "../memory/memory.h"
 #include "../logger/log2/logger.h"
 #include "../logger/log2/logger_concrete.h"
 #include "../logger/log2/logger_holder.h"
@@ -12,7 +12,7 @@ class memory_buddy_system final : public memory, private logger_holder
 private:
     void *_all_memory;
 
-private:
+protected:
     size_t get_block_avail_size(void *target_ptr) const override;
     size_t get_occup_block_serv_size() const override;
     size_t get_avail_block_serv_size() const override;
@@ -29,12 +29,13 @@ private:
     unsigned char compact_block_size_and_block_occup(size_t size_as_power_of_2, bool block_occup) const override;
     void *get_buddies(void *target_ptr) const override;
     bool is_free_block(void *target_ptr) const override;
+    memory *get_memory() const override;
 
 public:
-    virtual void *allocate(size_t target_size) const override;
+    virtual void *allocate(size_t requested_block_size) const override;
 
 public:
-    virtual void deallocate(void const *const target_to_dealloc) const override;
+    virtual void deallocate(void *block_to_deallocate_address) const override;
 
 public:
     memory_buddy_system(logger *log, memory *allocator, size_t size_as_power_of_2, allocate_mode method);

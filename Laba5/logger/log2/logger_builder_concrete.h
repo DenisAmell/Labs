@@ -8,26 +8,11 @@ class logger_builder_concrete final : public logger_builder
 {
 private:
     std::map<std::string, logger::severity> _construction_info;
-    std::map<std::string, logger::severity> _construction_info2;
 
 public:
     logger_builder *add_stream(std::string const &, logger::severity) override;
     logger_builder *from_json(std::string const &) override;
-    /*
-    JSON TYPENAME
-        {
-            "name":"severity",
-            "name1":""
-        }
-        ///////////////////////////////////////////////
-        for(auto& : ){
-            "pipe": ""critical"
-        //от библиотеки завсит
-             _construction_info[path] = severity;
-        }
-    return this;
-    */
-    //}
+
     logger *construct() const override;
 };
 

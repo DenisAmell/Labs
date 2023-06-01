@@ -1,5 +1,4 @@
 #include <iostream>
-#include "memory.h"
 #include "boundary_tags_allocator.h"
 #include <list>
 #include <ctime>
@@ -91,5 +90,5 @@ void allocator_demo_2()
 
 int main()
 {
-    allocator_demo_1(1000000);
+    allocator_demo_1(100);
 }

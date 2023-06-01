@@ -1,0 +1,53 @@
+[trace][01.06.2023 18:31:19] Boundary tags system allocator initialized!
+[trace][01.06.2023 18:31:19] The tree has been created.
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|avlbl 9920|
+[trace][01.06.2023 18:31:19] Allocated root
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|avlbl 9840|
+[trace][01.06.2023 18:31:19] Allocated root
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|avlbl 9760|
+[trace][01.06.2023 18:31:19] Allocated root
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|occup 56|avlbl 9680|
+[trace][01.06.2023 18:31:19] Allocated root
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9600|
+[trace][01.06.2023 18:31:19] Allocated root
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9520|
+[trace][01.06.2023 18:31:19] Allocated root
+[trace][01.06.2023 18:31:19] The tree has been created.
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9440|
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9360|
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9280|
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9200|
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9120|
+[trace][01.06.2023 18:31:19] Allocate is the first fit method
+[debug][01.06.2023 18:31:19] Memory state after allocation operation: |occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9040|
+[trace][01.06.2023 18:31:19] The tree has been copy
+[debug][01.06.2023 18:31:19] Block at address 0x55558d3a3b24 state before deallocation:
+[ 6 0 0 0 0 0 0 0 84 59 58 141 85 85 0 0 1 0 0 0 0 0 0 0 99 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+[debug][01.06.2023 18:31:19] Memory state after deallocation operation: |occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 80|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9040|
+[debug][01.06.2023 18:31:19] Block at address 0x55558d3a3ad4 state before deallocation:
+[ 4 0 0 0 0 0 0 0 4 59 58 141 85 85 0 0 1 0 0 0 0 0 0 0 97 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 60 59 58 141 85 85 0 0 ]
+[debug][01.06.2023 18:31:19] Memory state after deallocation operation: |occup 56|occup 56|occup 56|occup 56|avlbl 160|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9040|
+[debug][01.06.2023 18:31:19] Block at address 0x55558d3a3a84 state before deallocation:
+[ 3 0 0 0 0 0 0 0 180 58 58 141 85 85 0 0 1 0 0 0 0 0 0 0 98 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 236 58 58 141 85 85 0 0 ]
+[debug][01.06.2023 18:31:19] Memory state after deallocation operation: |occup 56|occup 56|occup 56|avlbl 240|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9040|
+[debug][01.06.2023 18:31:19] Block at address 0x55558d3a3a34 state before deallocation:
+[ 15 0 0 0 0 0 0 0 100 58 58 141 85 85 0 0 1 0 0 0 0 0 0 0 111 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 156 58 58 141 85 85 0 0 0 0 0 0 0 0 0 0 ]
+[debug][01.06.2023 18:31:19] Memory state after deallocation operation: |occup 56|occup 56|avlbl 320|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9040|
+[debug][01.06.2023 18:31:19] Block at address 0x55558d3a39e4 state before deallocation:
+[ 2 0 0 0 0 0 0 0 20 58 58 141 85 85 0 0 1 0 0 0 0 0 0 0 98 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 76 58 58 141 85 85 0 0 ]
+[debug][01.06.2023 18:31:19] Memory state after deallocation operation: |occup 56|avlbl 400|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9040|
+[debug][01.06.2023 18:31:19] Block at address 0x55558d3a3994 state before deallocation:
+[ 1 0 0 0 0 0 0 0 196 57 58 141 85 85 0 0 1 0 0 0 0 0 0 0 97 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 252 57 58 141 85 85 0 0 ]
+[debug][01.06.2023 18:31:19] Memory state after deallocation operation: |avlbl 480|occup 56|occup 56|occup 56|occup 56|occup 56|occup 56|avlbl 9040|
+[trace][01.06.2023 18:31:19] The tree has been deleted.
+[trace][01.06.2023 18:31:19] Destructor executed successfully

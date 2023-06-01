@@ -16,7 +16,7 @@ logger_concrete::logger_concrete(
 
         if (global_stream == _streams.end())
         {
-            if (target.first != "console") // TODO: ?!
+            if (target.first != "console")
             {
                 stream = new std::ofstream;
                 stream->open(target.first);
@@ -39,7 +39,6 @@ logger_concrete::~logger_concrete()
     for (auto &logger_stream : _logger_streams)
     {
         auto global_stream = _streams.find(logger_stream.first);
-        // TODO: check if global_stream == _streams.end()
         if (--(global_stream->second.second) == 0)
         {
             if (global_stream->second.first != nullptr)
@@ -85,7 +84,6 @@ logger_concrete::log(
         case logger::severity::critical:
             curr_sev = "critical";
             break;
-
         case logger::severity::error:
             curr_sev = "error";
             break;
@@ -112,9 +110,6 @@ logger_concrete::log(
         }
         else
         {
-            std::cout << "[" << curr_sev << "]"
-                      << "[" << currentDateTime() << "]"
-                      << " " << to_log << std::endl;
             (*logger_stream.second.first) << "[" << curr_sev << "]"
                                           << "[" << currentDateTime() << "]"
                                           << " " << to_log << std::endl;

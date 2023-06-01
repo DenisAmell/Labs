@@ -1,5 +1,4 @@
 #include <iostream>
-#include "memory.h"
 #include "memory_buddy_system.h"
 #include <list>
 #include <ctime>
@@ -117,5 +116,5 @@ void allocator_demo_2()
 
 int main()
 {
-    allocator_demo_1(50000);
+    allocator_demo_1(1000);
 }

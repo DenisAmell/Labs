@@ -2,6 +2,10 @@
 #define ALLOCATOR_H
 
 #include <iostream>
+#include "../logger/log2/logger.h"
+#include "../logger/log2/logger_builder.h"
+#include "../logger/log2/logger_builder_concrete.h"
+#include "../logger/log2/logger_concrete.h"
 
 class memory
 {
@@ -10,6 +14,9 @@ public:
 
 public:
     virtual void deallocate(void const *const target_to_dealloc) const = 0;
+
+public:
+    virtual void debug_alloc(const void *target_ptr, size_t size, logger *log) const = 0;
 
 public:
     virtual ~memory();

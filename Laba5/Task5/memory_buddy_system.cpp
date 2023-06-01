@@ -51,6 +51,11 @@ logger *memory_buddy_system::get_logger() const noexcept
     return *reinterpret_cast<logger **>(reinterpret_cast<unsigned char *>(_all_memory) + sizeof(size_t));
 }
 
+memory *memory_buddy_system::get_memory() const
+{
+    return *reinterpret_cast<memory **>(reinterpret_cast<unsigned char *>(_all_memory) + sizeof(size_t) + sizeof(logger *) + sizeof(memory::allocate_mode));
+}
+
 std::string memory_buddy_system::get_allocate_mode_string(allocate_mode method) const
 {
     std::string allocate_mode;
@@ -162,7 +167,6 @@ size_t memory_buddy_system::get_avail_block_serv_size() const
 
 void *memory_buddy_system::allocate(size_t requested_block_size) const
 {
-
     auto alloc_method = *reinterpret_cast<memory::allocate_mode *>(reinterpret_cast<unsigned char *>(_all_memory) + sizeof(size_t) + sizeof(logger *));
     void *curr_block = get_first_avail_block();
     size_t occup_block_serv_size = get_occup_block_serv_size();
@@ -254,10 +258,10 @@ void *memory_buddy_system::allocate(size_t requested_block_size) const
     return reinterpret_cast<void *>(reinterpret_cast<unsigned char *>(target_block) + 1);
 }
 
-void memory_buddy_system::deallocate(void const *const target_to_dealloc) const
+void memory_buddy_system::deallocate(void *block_to_deallocate_address) const
 {
 
-    auto curr_block = reinterpret_cast<void *>(reinterpret_cast<unsigned char *>(const_cast<void *>(target_to_dealloc)) - 1);
+    auto curr_block = reinterpret_cast<void *>(reinterpret_cast<unsigned char *>(block_to_deallocate_address) - 1);
     debug_alloc(curr_block);
 
     // while (curr_block < target_to_dealloc)

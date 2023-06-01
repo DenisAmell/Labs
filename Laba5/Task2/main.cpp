@@ -9,8 +9,6 @@
 
 int main()
 {
-    memory_denis allocator;
-
     logger_builder *builder = new logger_builder_concrete;
 
     logger *constructed_logger = builder
@@ -19,7 +17,10 @@ int main()
                                      ->add_stream("file3.txt", logger::severity::trace)
                                      ->construct();
     int size = 25;
-    int *p = reinterpret_cast<int *>(allocator.allocate(sizeof(int) * size));
+
+    memory *allocator = new memory_denis(constructed_logger);
+
+    int *p = reinterpret_cast<int *>(allocator->allocate(sizeof(int) * size));
     std::string log = "Allocated " + std::to_string(sizeof(int) * size) + " bytes";
     constructed_logger->log(log, logger::severity::trace);
 
@@ -30,16 +31,14 @@ int main()
     {
         p[i] = i;
 
-        std::cout << p[i] << " " << p + i << std::endl;
+        // std::cout << p[i] << " " << p + i << std::endl;
     }
 
-    unsigned char *byte = reinterpret_cast<unsigned char *>(p);
-
-    allocator.debug_alloc(byte, sizeof(int) * size, constructed_logger);
-    allocator.deallocate(p);
+    allocator->deallocate(p);
 
     constructed_logger->log("Dellocated array", logger::severity::trace);
 
+    delete allocator;
     delete constructed_logger;
     delete builder;
 

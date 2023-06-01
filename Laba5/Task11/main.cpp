@@ -40,6 +40,7 @@ int main()
                       ->add_stream("file1.txt", logger::severity::trace)
                       ->add_stream("file2.txt", logger::severity::debug)
                       ->construct();
+    delete builder;
 
     memory *allocator = new border_descriptors_memory(log, nullptr, 10000, memory::allocate_mode::first_fit);
 
@@ -50,6 +51,7 @@ int main()
     bst->insert(15, "o");
     bst->insert(3, "b");
     bst->insert(4, "a");
+    *bst += associative_container<int, std::string>::key_and_value_pair{6, "c"};
 
     // bst->remove(15);
     auto tree = *reinterpret_cast<binary_search_tree<int, std::string, key_comparer> *>(bst);
@@ -73,7 +75,11 @@ int main()
     std::cout << std::endl;
 
     delete bst;
-    // delete allocator;
-    // // delete log;
-    // // delete builder;
+    std::cout << "after bst" << std::endl;
+    delete allocator;
+    std::cout << "after allocator" << std::endl;
+    delete log;
+    std::cout << "after logger";
+
+    return 0;
 }

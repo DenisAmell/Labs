@@ -6,21 +6,21 @@
 #include "../logger/log2/logger_concrete.h"
 #include "../logger/log2/logger_holder.h"
 #include <cstring>
-#include "memory.h"
+#include "../memory/memory.h"
 
 class border_descriptors_memory final : public memory, private logger_holder
 {
 private:
     void *_all_memory;
 
-private:
+protected:
     size_t get_service_part_allocator_size() const override;
     void **get_first_occup_block() const override;
     size_t get_allocator_size() const override;
-    size_t get_serv_occup_block() const override;
+    size_t get_occup_block_serv_size() const override;
     void **get_pointer_prev_block(void *target_ptr) const override;
     void **get_pointer_next_block(void *target_ptr) const override;
-    size_t *get_block_size(void *target_ptr) const override;
+    size_t get_size_block(void *target_ptr) const override;
     void dump_allocator_state(bool is_allocate) const noexcept override;
     logger *get_logger() const noexcept override;
     void debug_alloc(const void *target_ptr) const override;
@@ -31,10 +31,10 @@ private:
     std::string get_allocate_mode_string(allocate_mode method) const override;
 
 public:
-    void *allocate(size_t target_size) const override;
+    void *allocate(size_t requested_block_size) const override;
 
 public:
-    void deallocate(void const *const target_to_dealloc) const override;
+    void deallocate(void *block_to_deallocate_address) const override;
 
 public:
     border_descriptors_memory(logger *log, memory *allocator, size_t size, memory::allocate_mode method);

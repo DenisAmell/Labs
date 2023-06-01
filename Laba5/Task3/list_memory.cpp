@@ -11,7 +11,7 @@ size_t list_memory::get_size_block(void *target_ptr) const
     return *reinterpret_cast<size_t *>(target_ptr);
 }
 
-void *const list_memory::get_first_avail_block() const
+void *list_memory::get_first_avail_block() const
 {
     return *get_first_avail_block_ptr();
 }
@@ -156,10 +156,10 @@ void *list_memory::allocate(size_t target_size) const
     return reinterpret_cast<void *>(reinterpret_cast<size_t *>(target_block) + 1);
 }
 
-void list_memory::deallocate(void const *const target_to_dealloc) const
+void list_memory::deallocate(void *block_to_deallocate_address) const
 {
 
-    auto true_block_ptr = reinterpret_cast<void *>(reinterpret_cast<size_t *>(const_cast<void *>(target_to_dealloc)) - 1);
+    auto true_block_ptr = reinterpret_cast<void *>(reinterpret_cast<size_t *>(block_to_deallocate_address) - 1);
     debug_alloc(true_block_ptr);
     auto curr_block = get_first_avail_block();
 
@@ -170,7 +170,7 @@ void list_memory::deallocate(void const *const target_to_dealloc) const
 
     void *prev_block = nullptr;
 
-    while (curr_block < target_to_dealloc)
+    while (curr_block < block_to_deallocate_address)
     {
         prev_block = curr_block;
         curr_block = get_pointer_block(curr_block);
@@ -179,19 +179,19 @@ void list_memory::deallocate(void const *const target_to_dealloc) const
     auto block_to_deallocate_size = *reinterpret_cast<size_t *>(true_block_ptr);
     if (prev_block == nullptr && curr_block == nullptr)
     {
-        *reinterpret_cast<void **>(const_cast<void *>(target_to_dealloc)) = nullptr;
+        *reinterpret_cast<void **>(const_cast<void *>(block_to_deallocate_address)) = nullptr;
         *get_first_avail_block_ptr() = true_block_ptr;
     }
     else
     {
         if (curr_block == nullptr)
         {
-            *reinterpret_cast<void **>(const_cast<void *>(target_to_dealloc)) = nullptr;
+            *reinterpret_cast<void **>(const_cast<void *>(block_to_deallocate_address)) = nullptr;
             block_to_deallocate_size = *reinterpret_cast<size_t *>(true_block_ptr) = block_to_deallocate_size - sizeof(void *);
         }
         else
         {
-            if (reinterpret_cast<unsigned char *>(const_cast<void *>(target_to_dealloc)) + block_to_deallocate_size == curr_block)
+            if (reinterpret_cast<unsigned char *>(const_cast<void *>(block_to_deallocate_address)) + block_to_deallocate_size == curr_block)
             {
                 *reinterpret_cast<void **>(reinterpret_cast<size_t *>(true_block_ptr) + 1) = get_pointer_block(curr_block);
                 block_to_deallocate_size = *reinterpret_cast<size_t *>(true_block_ptr) = sizeof(size_t) + block_to_deallocate_size + get_size_block(curr_block);

@@ -1,0 +1,3 @@
+[trace][01.06.2023 18:27:36] Boundary tags system allocator initialized!
+[trace][01.06.2023 18:27:36] The tree has been deleted.
+[trace][01.06.2023 18:27:36] Destructor executed successfully

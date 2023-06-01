@@ -7,31 +7,43 @@
 #include "../logger/log2/logger_concrete.h"
 #include "memory_denis.h"
 
+memory_denis::memory_denis(
+    logger *log)
+    : _log(log)
+{
+}
+
 void *memory_denis::allocate(size_t target_size) const
 {
-    return ::operator new(target_size);
+    auto *result = ::operator new(sizeof(size_t) + target_size);
+    auto *result_size = reinterpret_cast<size_t *>(result);
+    *result_size = target_size;
+    return result_size + 1;
 }
 
 void memory_denis::deallocate(void const *const target_to_dealloc) const
 {
-    ::operator delete(const_cast<void *>(target_to_dealloc));
+    auto *block_size_addr = reinterpret_cast<size_t *>(const_cast<void *>(target_to_dealloc)) - 1;
+    auto block_size = *block_size_addr;
+    debug_alloc(target_to_dealloc, block_size, _log);
+    ::operator delete(block_size_addr);
 }
 
-void memory_denis::debug_alloc(unsigned char *target_ptr, size_t size, logger *log)
+void memory_denis::debug_alloc(const void *target_ptr, size_t size, logger *log) const
 {
     // std::stringstream ss;
     // ss << static_cast<void *>(target_ptr);
     // std::string add(ss.str());
-
+    unsigned char *ptr = reinterpret_cast<unsigned char *>(const_cast<void *>(target_ptr));
     char str[20];
     memset(str, 0, 20);
     sprintf(str, "%p", target_ptr);
     std::string buff;
     for (int i = 0; i < size; i++)
     {
-        int tmp = *target_ptr;
+        unsigned short tmp = static_cast<unsigned short>(*ptr);
         buff.append(std::to_string(tmp) + ' ');
-        target_ptr++;
+        ptr++;
         // buff.insert(i + 1, " ");
     }
     std::string add;
