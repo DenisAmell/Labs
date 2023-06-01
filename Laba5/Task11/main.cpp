@@ -46,12 +46,13 @@ int main()
 
     associative_container<int, std::string> *bst = new binary_search_tree<int, std::string, key_comparer>(allocator, log);
 
-    bst->insert(1, "a");
-    bst->insert(2, "b");
-    bst->insert(15, "o");
-    bst->insert(3, "b");
-    bst->insert(4, "a");
-    *bst += associative_container<int, std::string>::key_and_value_pair{6, "c"};
+    bst->insert(1, std::move("a"));
+    bst->insert(2, std::move("b"));
+    bst->insert(15, std::move("o"));
+    bst->insert(3, std::move("b"));
+    bst->insert(4, std::move("a"));
+    auto ins = associative_container<int, std::string>::key_and_value_pair{6, std::move("c")};
+    *bst += ins;
 
     // bst->remove(15);
     auto tree = *reinterpret_cast<binary_search_tree<int, std::string, key_comparer> *>(bst);
