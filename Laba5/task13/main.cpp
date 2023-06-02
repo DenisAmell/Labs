@@ -37,11 +37,11 @@ int main()
     auto *rb_tree = new red_black_tree<int, std::string, key_comparer>(allocator, log);
 
     // // *rb_tree += associative_container<int, std::string>::key_and_value_pair{3, std::move(std::string("1234"))};
-    // rb_tree->insert(1, "a");
-    // rb_tree->insert(25, "b");
-    // rb_tree->insert(14, "x");
-    // rb_tree->insert(4, "g");
-    // rb_tree->insert(16, "l");
+    rb_tree->insert(1, "a");
+    rb_tree->insert(25, "b");
+    rb_tree->insert(14, "x");
+    rb_tree->insert(4, "g");
+    rb_tree->insert(16, "l");
 
     // auto tree = *reinterpret_cast<binary_search_tree<int, std::string, key_comparer> *>(rb_tree);
     // auto end_infix = tree.end_infix();
