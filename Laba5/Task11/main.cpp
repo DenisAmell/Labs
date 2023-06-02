@@ -40,19 +40,18 @@ int main()
                       ->add_stream("file1.txt", logger::severity::trace)
                       ->add_stream("file2.txt", logger::severity::debug)
                       ->construct();
-    delete builder;
 
     memory *allocator = new border_descriptors_memory(log, nullptr, 10000, memory::allocate_mode::first_fit);
 
     associative_container<int, std::string> *bst = new binary_search_tree<int, std::string, key_comparer>(allocator, log);
 
-    bst->insert(1, std::move("a"));
-    bst->insert(2, std::move("b"));
-    bst->insert(15, std::move("o"));
-    bst->insert(3, std::move("b"));
-    bst->insert(4, std::move("a"));
-    auto ins = associative_container<int, std::string>::key_and_value_pair{6, std::move("c")};
-    *bst += ins;
+    bst->insert(1, std::move(std::string("a")));
+    bst->insert(2, std::move(std::string("b")));
+    bst->insert(15, std::move(std::string("o")));
+    bst->insert(3, std::move(std::string("b")));
+    bst->insert(4, std::move(std::string("a")));
+    // auto ins = associative_container<int, std::string>::key_and_value_pair{6, std::move("c")};
+    // *bst += ins;
 
     // bst->remove(15);
     auto tree = *reinterpret_cast<binary_search_tree<int, std::string, key_comparer> *>(bst);
@@ -76,11 +75,6 @@ int main()
     std::cout << std::endl;
 
     delete bst;
-    std::cout << "after bst" << std::endl;
-    delete allocator;
-    std::cout << "after allocator" << std::endl;
-    delete log;
-    std::cout << "after logger";
 
     return 0;
 }

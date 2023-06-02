@@ -1,5 +1,9 @@
-#ifndef ASSOCIATIVE_CONTAINER_H
-#define ASSOCIATIVE_CONTAINER_H
+
+
+#ifndef DATA_STRUCTURES_CPP_ASSOCIATIVE_CONTAINER_H
+#define DATA_STRUCTURES_CPP_ASSOCIATIVE_CONTAINER_H
+
+#include <iostream>
 
 template <
     typename tkey,
@@ -60,4 +64,4 @@ tvalue associative_container<tkey, tvalue>::operator-=(const tkey &key)
     return remove(key);
 }
 
-#endif // ASSOCIATIVE_CONTAINER_H
+#endif // DATA_STRUCTURES_CPP_ASSOCIATIVE_CONTAINER_H

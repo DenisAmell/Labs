@@ -138,11 +138,7 @@ protected:
             std::stack<node **> &path_to_subtree_root_exclusive);
 
     protected:
-        virtual void before_insert_inner(
-            tkey const &key,
-            tvalue &&value,
-            node *&subtree_root_address,
-            std::stack<node **> &path_to_subtree_root_exclusive);
+        virtual void before_insert() {}
 
         virtual void after_insert_inner(
             tkey const &key,
@@ -154,9 +150,9 @@ protected:
         virtual void call_constructor_node(node *mem, tkey const &key, tvalue &&value) const;
 
     private:
-        memory *get_memory() const final;
+        memory *get_memory() const noexcept final;
 
-        logger *get_logger() const final;
+        logger *get_logger() const noexcept final;
 
     private:
         binary_search_tree<tkey, tvalue, tkey_comparer> *_tree;
@@ -198,7 +194,7 @@ protected:
             std::stack<node **> &path_to_subtree_root_exclusive);
 
     protected:
-        logger *get_logger() const final;
+        logger *get_logger() const noexcept final;
     };
 
     class removing_template_method : protected logger_holder, protected memory_holder
@@ -249,9 +245,9 @@ protected:
         virtual void swap_additional_nodes_data(node *one_node, node *another_node);
 
     private:
-        memory *get_memory() const final;
+        memory *get_memory() const noexcept final;
 
-        logger *get_logger() const final;
+        logger *get_logger() const noexcept final;
     };
 
 private:
@@ -302,9 +298,9 @@ public:
         tkey const &key) override;
 
 private:
-    logger *get_logger() const override;
+    logger *get_logger() const noexcept final;
 
-    memory *get_memory() const override;
+    memory *get_memory() const noexcept final;
 
     virtual size_t get_node_size() const;
 
@@ -316,6 +312,8 @@ private:
     void move(binary_search_tree<tkey, tvalue, tkey_comparer> &&other);
 
     void clear();
+
+    void clear_inner(node *to_clear);
 
 public:
     prefix_iterator begin_prefix() const noexcept;
@@ -331,32 +329,32 @@ public:
     postfix_iterator end_postfix() const noexcept;
 
 protected:
-    virtual void left_rotation(binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root) const;
-    virtual void right_rotation(binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root) const;
+    void left_rotation(binary_search_tree<tkey, tvalue, tkey_comparer>::node **subtree_root) const;
+    void right_rotation(binary_search_tree<tkey, tvalue, tkey_comparer>::node **subtree_root) const;
 };
 
 template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-void binary_search_tree<tkey, tvalue, tkey_comparer>::left_rotation(binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root) const
+void binary_search_tree<tkey, tvalue, tkey_comparer>::left_rotation(binary_search_tree<tkey, tvalue, tkey_comparer>::node **subtree_root) const
 {
-    node *tmp = subtree_root;
-    subtree_root = subtree_root->right_subtree_address;
-    tmp->right_subtree_address = subtree_root->left_subtree_address;
-    subtree_root->left_subtree_address = tmp;
+    node *tmp = *subtree_root;
+    *subtree_root = (*subtree_root)->right_subtree_address;
+    tmp->right_subtree_address = (*subtree_root)->left_subtree_address;
+    (*subtree_root)->left_subtree_address = tmp;
 }
 
 template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-void binary_search_tree<tkey, tvalue, tkey_comparer>::right_rotation(binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root) const
+void binary_search_tree<tkey, tvalue, tkey_comparer>::right_rotation(binary_search_tree<tkey, tvalue, tkey_comparer>::node **subtree_root) const
 {
-    node *tmp = subtree_root;
-    subtree_root = subtree_root->left_subtree_address;
-    tmp->left_subtree_address = subtree_root->right_subtree_address;
-    subtree_root->right_subtree_address = tmp;
+    node *tmp = *subtree_root;
+    *subtree_root = (*subtree_root)->left_subtree_address;
+    tmp->left_subtree_address = (*subtree_root)->right_subtree_address;
+    (*subtree_root)->right_subtree_address = tmp;
 }
 
 // region iterators implementation
@@ -795,7 +793,7 @@ void binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method:
     tvalue &&value,
     binary_search_tree<tkey, tvalue, tkey_comparer>::node *&tree_root_address)
 {
-
+    before_insert();
     std::stack<binary_search_tree<tkey, tvalue, tkey_comparer>::node **> path_to_subtree_root_exclusive;
     insert_inner(key, std::move(value), tree_root_address, path_to_subtree_root_exclusive);
 }
@@ -867,18 +865,6 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-void binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method::before_insert_inner(
-    tkey const &key,
-    tvalue &&value,
-    binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
-    std::stack<binary_search_tree<tkey, tvalue, tkey_comparer>::node **> &path_to_subtree_root_exclusive)
-{
-}
-
-template <
-    typename tkey,
-    typename tvalue,
-    typename tkey_comparer>
 void binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method::after_insert_inner(
     tkey const &key,
     typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
@@ -890,7 +876,7 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-memory *binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method::get_memory() const
+memory *binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method::get_memory() const noexcept
 {
     return _tree->get_memory();
 }
@@ -899,7 +885,7 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-logger *binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method::get_logger() const
+logger *binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method::get_logger() const noexcept
 {
     return _tree->get_logger();
 }
@@ -988,7 +974,7 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-logger *binary_search_tree<tkey, tvalue, tkey_comparer>::reading_template_method::get_logger() const
+logger *binary_search_tree<tkey, tvalue, tkey_comparer>::reading_template_method::get_logger() const noexcept
 {
     return _tree->_logger;
 }
@@ -1168,7 +1154,7 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-logger *binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method::get_logger() const
+logger *binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method::get_logger() const noexcept
 {
     return _tree->_logger;
 }
@@ -1177,7 +1163,7 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-memory *binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method::get_memory() const
+memory *binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method::get_memory() const noexcept
 {
     return _tree->_allocator;
 }
@@ -1250,13 +1236,25 @@ template <
     typename tkey_comparer>
 void binary_search_tree<tkey, tvalue, tkey_comparer>::clear()
 {
-    auto it_end = end_postfix();
-    for (auto it = begin_postfix(); it != it_end; ++it)
+    clear_inner(_root);
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+void binary_search_tree<tkey, tvalue, tkey_comparer>::clear_inner(node *to_clear)
+{
+    if (to_clear == nullptr)
     {
-        // std::cout << "gg" << std::endl;
-        it.get_current_node()->~node();
-        deallocate_with_guard(it.get_current_node());
+        return;
     }
+
+    clear_inner(to_clear->left_subtree_address);
+    clear_inner(to_clear->right_subtree_address);
+
+    to_clear->~node();
+    deallocate_with_guard(to_clear);
 }
 
 template <
@@ -1411,7 +1409,7 @@ tvalue binary_search_tree<tkey, tvalue, tkey_comparer>::remove(
     return _removing->remove(key, _root);
 }
 
-// endregion associative_container contract implementation
+// endregion associative_container contract implementations
 
 // region logger_holder contract implementation
 
@@ -1419,7 +1417,7 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-logger *binary_search_tree<tkey, tvalue, tkey_comparer>::get_logger() const
+logger *binary_search_tree<tkey, tvalue, tkey_comparer>::get_logger() const noexcept
 {
     return _logger;
 }
@@ -1428,7 +1426,7 @@ template <
     typename tkey,
     typename tvalue,
     typename tkey_comparer>
-memory *binary_search_tree<tkey, tvalue, tkey_comparer>::get_memory() const
+memory *binary_search_tree<tkey, tvalue, tkey_comparer>::get_memory() const noexcept
 {
     return _allocator;
 }
