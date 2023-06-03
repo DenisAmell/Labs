@@ -42,6 +42,7 @@ int main()
     rb_tree->insert(14, "x");
     rb_tree->insert(4, "g");
     rb_tree->insert(16, "l");
+    rb_tree->remove(14);
 
     // auto tree = *reinterpret_cast<binary_search_tree<int, std::string, key_comparer> *>(rb_tree);
     // auto end_infix = tree.end_infix();
