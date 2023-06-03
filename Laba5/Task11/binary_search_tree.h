@@ -220,6 +220,9 @@ protected:
             std::list<node **> &path_to_subtree_root_exclusive);
 
     protected:
+        virtual void before_remove() {}
+
+    protected:
         virtual void before_remove_inner(
             tkey const &key,
             node *&subtree_root_address,
@@ -832,10 +835,8 @@ void binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method:
     binary_search_tree<tkey, tvalue, tkey_comparer>::node *&subtree_root_address,
     std::stack<binary_search_tree<tkey, tvalue, tkey_comparer>::node **> &path_to_subtree_root_exclusive)
 {
-
     if (subtree_root_address == nullptr)
     {
-
         subtree_root_address = reinterpret_cast<node *>(allocate_with_guard(get_node_size()));
 
         this->trace_with_guard("Allocated root");
@@ -845,7 +846,6 @@ void binary_search_tree<tkey, tvalue, tkey_comparer>::insertion_template_method:
     }
     else
     {
-
         int res_functor = _tree->_comparator(key, subtree_root_address->key);
         if (res_functor == 0)
         {
@@ -991,6 +991,7 @@ tvalue binary_search_tree<tkey, tvalue, tkey_comparer>::removing_template_method
     tkey const &key,
     binary_search_tree<tkey, tvalue, tkey_comparer>::node *&tree_root_address)
 {
+    before_remove();
     std::list<binary_search_tree::node **> path_to_subtree_root_exclusive;
     return remove_inner(key, tree_root_address, path_to_subtree_root_exclusive);
 }
