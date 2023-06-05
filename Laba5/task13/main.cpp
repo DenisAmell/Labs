@@ -38,11 +38,23 @@ int main()
 
     // // *rb_tree += associative_container<int, std::string>::key_and_value_pair{3, std::move(std::string("1234"))};
     rb_tree->insert(1, "a");
+    rb_tree->prefix_traverse();
+    std::cout << std::endl;
     rb_tree->insert(25, "b");
+    rb_tree->prefix_traverse();
+    std::cout << std::endl;
     rb_tree->insert(14, "x");
+    rb_tree->prefix_traverse();
+    std::cout << std::endl;
     rb_tree->insert(4, "g");
+    rb_tree->prefix_traverse();
+    std::cout << std::endl;
     rb_tree->insert(16, "l");
+    rb_tree->prefix_traverse();
+    std::cout << std::endl;
     rb_tree->remove(14);
+    rb_tree->prefix_traverse();
+    std::cout << std::endl;
 
     // auto tree = *reinterpret_cast<binary_search_tree<int, std::string, key_comparer> *>(rb_tree);
     // auto end_infix = tree.end_infix();
