@@ -1,7 +1,7 @@
 #ifndef RED_BLACK_TREE_H
 #define RED_BLACK_TREE_H
 
-#include "../Task11/binary_search_tree.h"
+#include "binary_search_tree.h"
 
 template <
     typename tkey,
@@ -128,6 +128,28 @@ private:
 public:
     explicit red_black_tree(memory *allocator = nullptr,
                             logger *logger = nullptr);
+    red_black_tree(
+        red_black_tree const &other);
+
+    red_black_tree(
+        red_black_tree &&other) noexcept;
+
+    red_black_tree &operator=(
+        red_black_tree const &other);
+
+    red_black_tree &operator=(
+        red_black_tree &&other) noexcept;
+
+    // private:
+    //     node *copy() const;
+
+    //     node *copy_inner(node *to_copy) const;
+
+    //     void move(binary_search_tree<tkey, tvalue, tkey_comparer> &&other);
+
+    //     void clear();
+
+    //     void clear_inner(node *to_clear);
 
 private:
     color_node get_color(red_black_node *current_node) const noexcept;
@@ -467,5 +489,53 @@ red_black_tree<tkey, tvalue, tkey_comparer>::red_black_tree(memory *allocator, l
 }
 
 // end region constructor
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+red_black_tree<tkey, tvalue, tkey_comparer>::red_black_tree(
+    red_black_tree &&other) noexcept
+{
+    _tree->move(std::move(other));
+    // this->trace_with_guard("The tree has been moved.");
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+red_black_tree<tkey, tvalue, tkey_comparer> &red_black_tree<tkey, tvalue, tkey_comparer>::operator=(
+    const red_black_tree &other)
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    // clear();
+
+    _root = other.copy();
+    return *this;
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+red_black_tree<tkey, tvalue, tkey_comparer> &red_black_tree<tkey, tvalue, tkey_comparer>::operator=(
+    red_black_tree &&other) noexcept
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    // clear();
+
+    move(std::move(other));
+
+    return *this;
+}
 
 #endif // RED_BLACK_TREE_H
