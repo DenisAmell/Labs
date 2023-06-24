@@ -29,32 +29,32 @@ bigint *bigint::operator-(bigint const *subtrahend)
     return subtraction(subtrahend);
 }
 
-bool bigint::operator<(bigint const *const other) const
+bool bigint::operator<(bigint const *other)
 {
     return lower_than(other);
 }
 
-bool bigint::operator>(bigint const *const other) const
+bool bigint::operator>(bigint const *other)
 {
     return greater_than(other);
 }
 
-bool bigint::operator<=(bigint const *const other) const
+bool bigint::operator<=(bigint const *other)
 {
     return lower_than_or_equal_to(other);
 }
 
-bool bigint::operator>=(bigint const *const other) const
+bool bigint::operator>=(bigint const *other)
 {
     return greater_than_or_equal_to(other);
 }
 
-bool bigint::operator==(bigint const *const other) const
+bool bigint::operator==(bigint const *other)
 {
     return equals(other);
 }
 
-bool bigint::operator!=(bigint const *const other) const
+bool bigint::operator!=(bigint const *other)
 {
     return not_equals(other);
 }
