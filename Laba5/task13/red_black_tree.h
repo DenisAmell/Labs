@@ -9,7 +9,7 @@ template <
     typename tkey_comparer>
 class red_black_tree final : public binary_search_tree<tkey, tvalue, tkey_comparer>
 {
-private:
+public:
     enum class color_node
     {
         RED,
@@ -299,7 +299,7 @@ void red_black_tree<tkey, tvalue, tkey_comparer>::red_black_insertion_template_m
         return;
     }
 
-    if (_rise_further_status != _rise_near_status)
+    if (_rise_further_status != _rise_near_status && uncle == nullptr)
     {
         if (_rise_near_status == rise_status::FROM_LEFT_SUBTREE)
         {
@@ -494,10 +494,10 @@ void red_black_tree<tkey, tvalue, tkey_comparer>::red_black_removing_template_me
         //     }
         // }
     }
-    else
-    {
-        return;
-    }
+    // else
+    // {
+    //     return;
+    // }
 }
 
 template <
