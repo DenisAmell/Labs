@@ -2,7 +2,7 @@
 #define SANDBOX_CPP_MEMORY_H
 
 #include <string>
-#include "../logger/log2/logger.h"
+#include "../logger/logger.h"
 #include "../not_implemented/not_implemented.h"
 
 class memory

@@ -1,6 +1,10 @@
-
 #ifndef FUNDAMENTAL_ALGO_COMMAND_H
 #define FUNDAMENTAL_ALGO_COMMAND_H
+
+#include "../parse.h"
+#include <sstream>
+#include <iostream>
+#include <vector>
 template <typename trequest>
 class command
 {
@@ -9,7 +13,7 @@ public:
 
 public:
     virtual bool can_execute(trequest const &) noexcept = 0;
-    virtual void execute(trequest const &) const noexcept = 0;
+    virtual void execute(trequest const &) noexcept = 0;
 };
 
 #endif // FUNDAMENTAL_ALGO_COMMAND_H

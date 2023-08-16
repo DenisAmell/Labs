@@ -9,7 +9,7 @@ template <
     typename tkey_comparer>
 class red_black_tree final : public binary_search_tree<tkey, tvalue, tkey_comparer>
 {
-private:
+public:
     enum class color_node
     {
         RED,
@@ -73,6 +73,16 @@ private:
     private:
         size_t get_node_size() const override;
 
+        void call_constructor_node(
+            typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *mem) const override;
+
+        void initialize_node_additional_data(
+            typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *mem) const override;
+
+        void inject_additional_data(
+            typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *from,
+            typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *to) const override;
+
     protected:
         void before_insert() override
         {
@@ -128,6 +138,28 @@ private:
 public:
     explicit red_black_tree(memory *allocator = nullptr,
                             logger *logger = nullptr);
+    red_black_tree(
+        red_black_tree<tkey, tvalue, tkey_comparer> const &other);
+
+    red_black_tree(
+        red_black_tree<tkey, tvalue, tkey_comparer> &&other) noexcept;
+
+    red_black_tree &operator=(
+        red_black_tree<tkey, tvalue, tkey_comparer> const &other);
+
+    red_black_tree &operator=(
+        red_black_tree<tkey, tvalue, tkey_comparer> &&other) noexcept;
+
+    // private:
+    //     node *copy() const;
+
+    //     node *copy_inner(node *to_copy) const;
+
+    //     void move(binary_search_tree<tkey, tvalue, tkey_comparer> &&other);
+
+    //     void clear();
+
+    //     void clear_inner(node *to_clear);
 
 private:
     color_node get_color(red_black_node *current_node) const noexcept;
@@ -143,7 +175,38 @@ template <
     typename tkey_comparer>
 size_t red_black_tree<tkey, tvalue, tkey_comparer>::red_black_insertion_template_method::get_node_size() const
 {
-    return sizeof(red_black_node);
+    return sizeof(typename red_black_tree<tkey, tvalue, tkey_comparer>::red_black_node);
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+void red_black_tree<tkey, tvalue, tkey_comparer>::red_black_insertion_template_method::call_constructor_node(
+    typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *mem) const
+{
+    new (mem) typename red_black_tree<tkey, tvalue, tkey_comparer>::red_black_node;
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+void red_black_tree<tkey, tvalue, tkey_comparer>::red_black_insertion_template_method::initialize_node_additional_data(
+    typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *mem) const
+{
+    reinterpret_cast<typename red_black_tree<tkey, tvalue, tkey_comparer>::red_black_node *>(mem)->color = red_black_tree<tkey, tvalue, tkey_comparer>::color_node::RED;
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+void red_black_tree<tkey, tvalue, tkey_comparer>::red_black_insertion_template_method::inject_additional_data(
+    typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *from,
+    typename binary_search_tree<tkey, tvalue, tkey_comparer>::node *to) const
+{
+    reinterpret_cast<typename red_black_tree<tkey, tvalue, tkey_comparer>::red_black_node *>(to)->color = reinterpret_cast<typename red_black_tree<tkey, tvalue, tkey_comparer>::red_black_node *>(from)->color;
 }
 
 template <
@@ -151,7 +214,7 @@ template <
     typename tvalue,
     typename tkey_comparer>
 typename red_black_tree<tkey, tvalue, tkey_comparer>::color_node red_black_tree<tkey, tvalue, tkey_comparer>::get_color(
-    red_black_node *current_node) const noexcept
+    typename red_black_tree<tkey, tvalue, tkey_comparer>::red_black_node *current_node) const noexcept
 {
     return current_node == nullptr ? color_node::BLACK : current_node->color;
 }
@@ -236,7 +299,7 @@ void red_black_tree<tkey, tvalue, tkey_comparer>::red_black_insertion_template_m
         return;
     }
 
-    if (_rise_further_status != _rise_near_status)
+    if (_rise_further_status != _rise_near_status && uncle == nullptr)
     {
         if (_rise_near_status == rise_status::FROM_LEFT_SUBTREE)
         {
@@ -431,10 +494,10 @@ void red_black_tree<tkey, tvalue, tkey_comparer>::red_black_removing_template_me
         //     }
         // }
     }
-    else
-    {
-        return;
-    }
+    // else
+    // {
+    //     return;
+    // }
 }
 
 template <
@@ -467,5 +530,72 @@ red_black_tree<tkey, tvalue, tkey_comparer>::red_black_tree(memory *allocator, l
 }
 
 // end region constructor
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+red_black_tree<tkey, tvalue, tkey_comparer>::red_black_tree(
+    red_black_tree<tkey, tvalue, tkey_comparer> const &other)
+    : red_black_tree(other._allocator, other._logger)
+{
+    binary_search_tree<tkey, tvalue, tkey_comparer>::_root = other.copy();
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+red_black_tree<tkey, tvalue, tkey_comparer>::red_black_tree(
+    red_black_tree<tkey, tvalue, tkey_comparer> &&other) noexcept
+{
+    this->move(static_cast<binary_search_tree<tkey, tvalue, tkey_comparer> &&>(std::move(other)));
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+red_black_tree<tkey, tvalue, tkey_comparer> &red_black_tree<tkey, tvalue, tkey_comparer>::operator=(
+    const red_black_tree<tkey, tvalue, tkey_comparer> &other)
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    this->clear();
+
+    this->_allocator = other._allocator;
+    this->_logger = other._logger;
+    this->_root = other.copy();
+
+    return *this;
+}
+
+template <
+    typename tkey,
+    typename tvalue,
+    typename tkey_comparer>
+red_black_tree<tkey, tvalue, tkey_comparer> &red_black_tree<tkey, tvalue, tkey_comparer>::operator=(
+    red_black_tree<tkey, tvalue, tkey_comparer> &&other) noexcept
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    this->clear();
+
+    delete this->_insertion;
+    delete this->_reading;
+    delete this->_removing;
+
+    this->move(std::move(other));
+
+    return *this;
+
+    return *this;
+}
 
 #endif // RED_BLACK_TREE_H

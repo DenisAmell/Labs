@@ -1,9 +1,10 @@
 #ifndef FUNDAMENTAL_ALGO_REQUEST_HANDLER_WITH_COMMAND_CHAIN_H
 #define FUNDAMENTAL_ALGO_REQUEST_HANDLER_WITH_COMMAND_CHAIN_H
-#include "abstract_handler.h"
+
+#include "request_handler_with_command.h"
 
 template <typename trequest>
-class request_handler_with_command_chain final
+class request_handler_with_command_chain
 {
 private:
     abstract_handler<trequest> *_first_handler;
@@ -23,10 +24,10 @@ public:
             delete _last_handler;
         }
     }
-    request_handler_with_command_chain(request_handler_with_command_chain const &) = delete;
-    request_handler_with_command_chain(request_handler_with_command_chain &&) = delete;
-    request_handler_with_command_chain &operator=(request_handler_with_command_chain const &) = delete;
-    request_handler_with_command_chain &operator=(request_handler_with_command_chain &&) = delete;
+    request_handler_with_command_chain(request_handler_with_command_chain<trequest> const &) = delete;
+    request_handler_with_command_chain(request_handler_with_command_chain<trequest> &&) = delete;
+    request_handler_with_command_chain<trequest> &operator=(request_handler_with_command_chain<trequest> const &) = delete;
+    request_handler_with_command_chain<trequest> &operator=(request_handler_with_command_chain<trequest> &&) = delete;
 
 public:
     bool handle(trequest const &request) const noexcept

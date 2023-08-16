@@ -1,10 +1,9 @@
 #ifndef FUNDAMENTAL_ALGO_COMMAND_ADD_COLLECTION_H
 #define FUNDAMENTAL_ALGO_COMMAND_ADD_COLLECTION_H
-#include <iostream>
-#include "../logger_singleton.h"
+
 #include "command.h"
-#include <vector>
-#include "parse.h"
+#include "../database_singleton.h"
+#include "../logger_singleton.h"
 
 class command_add_collection final : public command<std::string>
 {
@@ -16,23 +15,29 @@ private:
 public:
     bool can_execute(std::string const &request) noexcept final
     {
-
         logger_singleton::get_instance()->get_logger()->log("command_add_collection::can_execute(std::string const &request) called", logger::severity::trace);
-        if (!prefix_validation("ADD_COLLECTION", request))
-            return false;
-        std::vector<std::string> result_parsed_strings = validation("ADD_COLLECTION", request, 3);
-        if (!result_parsed_strings.empty())
+        // if (!prefix_validation("ADD_COLLECTION", request))
+        //     return false;
+
+        if (request.starts_with("ADD_COLLECTION"))
         {
-            _pool_name = result_parsed_strings[0];
-            _scheme_name = result_parsed_strings[1];
-            _collection_name = result_parsed_strings[2];
-            return true;
+
+            std::vector<std::string> result_parsed_strings = validation(request, ' ');
+            if (result_parsed_strings.size() == 4)
+            {
+                _pool_name = std::move(result_parsed_strings[1]);
+                _scheme_name = std::move(result_parsed_strings[2]);
+                _collection_name = std::move(result_parsed_strings[3]);
+                std::cout << "gg" << std::endl;
+                return true;
+            }
         }
         return false;
     }
 
-    void execute(std::string const &request) const noexcept final
+    void execute(std::string const &request) noexcept final
     {
+        database_singleton::get_instance()->add_collection(_pool_name, _scheme_name, _collection_name);
         logger_singleton::get_instance()->get_logger()->log("command_add_collection::execute(std::string const &request) called", logger::severity::trace);
     }
 };

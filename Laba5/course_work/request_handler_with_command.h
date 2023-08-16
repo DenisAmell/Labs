@@ -21,13 +21,13 @@ public:
         delete _target_action;
     }
 
-    request_handler_with_command(request_handler_with_command const &) = delete;
-    request_handler_with_command(request_handler_with_command &&) = delete;
-    request_handler_with_command &operator=(request_handler_with_command const &) = delete;
-    request_handler_with_command &operator=(request_handler_with_command &&) = delete;
+    request_handler_with_command(request_handler_with_command<trequest> const &) = delete;
+    request_handler_with_command(request_handler_with_command<trequest> &&) = delete;
+    request_handler_with_command<trequest> &operator=(request_handler_with_command<trequest> const &) = delete;
+    request_handler_with_command<trequest> &operator=(request_handler_with_command<trequest> &&) = delete;
 
 public:
-    bool handle(trequest const &request) const noexcept final
+    bool handle(trequest const &request) const noexcept
     {
 
         if (!_target_action->can_execute(request))
@@ -44,4 +44,5 @@ public:
         return true;
     }
 };
+
 #endif // FUNDAMENTAL_ALGO_REQUEST_HANDLER_WITH_COMMAND_H

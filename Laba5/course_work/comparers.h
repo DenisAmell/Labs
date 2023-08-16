@@ -1,6 +1,9 @@
+
 #ifndef FUNDAMENTAL_ALGO_COMPARERS_H
 #define FUNDAMENTAL_ALGO_COMPARERS_H
 #include <iostream>
+
+#include "student_definition.h"
 
 class stdstring_comparer final
 {
@@ -49,6 +52,38 @@ public:
         int right)
     {
         return left - right;
+    }
+};
+
+class key_comparer
+{
+
+private:
+    stdstring_comparer _string_comparer;
+
+public:
+    int operator()(key *first, key *second)
+    {
+        int comparison_result = first->id_session - second->id_session;
+        if (comparison_result != 0)
+        {
+            return comparison_result;
+        }
+
+        comparison_result = first->id_student - second->id_student;
+        if (comparison_result != 0)
+        {
+            return comparison_result;
+        }
+
+        // comparison_result = first->format - second->format;
+        comparison_result = 0; // TODO:
+        if (comparison_result != 0)
+        {
+            return comparison_result;
+        }
+
+        return _string_comparer(first->subject, second->subject);
     }
 };
 #endif // FUNDAMENTAL_ALGO_COMPARERS_H

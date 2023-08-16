@@ -1,14 +1,17 @@
 #ifndef FUNDAMENTAL_ALGO_ABSTRACT_HANDLER_H
 #define FUNDAMENTAL_ALGO_ABSTRACT_HANDLER_H
 
-#include "request_handler_with_command.h"
-#include "request_handler_with_command_chain.h"
+// #include "request_handler_with_command_chain.h"
+
+template <typename trequest>
+class request_handler_with_command_chain;
+
 template <typename trequest>
 class abstract_handler
 {
     friend class request_handler_with_command_chain<trequest>;
 
-protected:
+public:
     abstract_handler<trequest> *_next_handler;
 
 public:
